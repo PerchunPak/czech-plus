@@ -16,6 +16,7 @@ repository = "https://github.com/PerchunPak/czech-plus"
 [tool.poetry.dependencies]
 python = "~3.9"
 aqt = {extras = ["qt6"], version = "~2"}
+loguru = "^0.6.0"
 
 
 [tool.poetry.group.make.dependencies]
