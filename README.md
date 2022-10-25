@@ -63,5 +63,5 @@ Use Anki's addon manager.
 ## Thanks
 
 This project was generated with [fire-square-style](https://github.com/fire-square/fire-square-style).
-Current template version: [624a5259df6a2ba4fa9629f491e2966d030e496b](https://github.com/fire-square/fire-square-style/tree/624a5259df6a2ba4fa9629f491e2966d030e496b).
-See what [updated](https://github.com/fire-square/fire-square-style/compare/624a5259df6a2ba4fa9629f491e2966d030e496b...master).
+Current template version: [7d590fd18edddc06c6879f7949fa312574ad2a72](https://github.com/fire-square/fire-square-style/tree/7d590fd18edddc06c6879f7949fa312574ad2a72).
+See what [updated](https://github.com/fire-square/fire-square-style/compare/7d590fd18edddc06c6879f7949fa312574ad2a72...master).
