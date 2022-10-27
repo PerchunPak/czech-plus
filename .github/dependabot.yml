@@ -8,6 +8,8 @@ updates:
   ignore:
     - dependency-name: "*"
       update-types: [ "version-update:semver-patch" ]
+    - dependency-name: "typing-extensions"
+      update-types: [ "version-update:semver-minor" ]
     # Update these dependencies with CI (poetry update)
     - dependency-name: "colorama"
     # Update these dependencies with fire-square-style

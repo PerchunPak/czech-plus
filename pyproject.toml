@@ -17,13 +17,15 @@ repository = "https://github.com/PerchunPak/czech-plus"
 python = "~3.9"
 
 aqt = {extras = ["qt6"], version = "~2"}
-loguru = "^0.6.0"
+loguru = "~0.6"
+typing-extensions = "~4"
 
 
 [tool.poetry.group.make.dependencies]
 black = "~22"
 isort = "~5.10"
 pycln = "~2.1"
+doc8 = "~1.0"
 mypy = "*"  # dependabot can't update non semver dependencies with our config, see e9376da in fire-square-style
 flake8 = "~5"
 flake8-docstrings = "~1"
@@ -39,7 +41,20 @@ pytest-cov = "~4.0"
 pytest-mock = "~3.10"
 pytest-testmon = "~1.4"
 pytest-randomly = "~3.12"
+
+factory-boy = "~3.2"
 Faker = "~15.1"
+
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "~5.3"
+sphinx-autodoc-typehints = "~1.19"
+sphinx-autoapi = "~2.0"
+sphinx-intl = "~2.0"  # only for locales
+furo = "*"
+m2r2 = "~0.3"
+tomli = { version = "~2.0", markers = "python_version < '3.11'" }
+packaging = "21.3"
 
 
 [tool.poetry.group.github_hooks]

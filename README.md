@@ -6,7 +6,6 @@
 [![codecov](https://codecov.io/gh/PerchunPak/czech-plus/branch/master/graph/badge.svg)](https://codecov.io/gh/PerchunPak/czech-plus)
 [![Documentation Build Status](https://readthedocs.org/projects/czech-plus/badge/?version=latest)](https://czech-plus.readthedocs.io/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Python support versions badge](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue)](https://www.python.org/downloads/)
 
 My addon to learn Czech
 
@@ -63,5 +62,5 @@ Use Anki's addon manager.
 ## Thanks
 
 This project was generated with [fire-square-style](https://github.com/fire-square/fire-square-style).
-Current template version: [7d590fd18edddc06c6879f7949fa312574ad2a72](https://github.com/fire-square/fire-square-style/tree/7d590fd18edddc06c6879f7949fa312574ad2a72).
-See what [updated](https://github.com/fire-square/fire-square-style/compare/7d590fd18edddc06c6879f7949fa312574ad2a72...master).
+Current template version: [0b95566440903e40ebde0b43578b9c63a4d40ee2](https://github.com/fire-square/fire-square-style/tree/0b95566440903e40ebde0b43578b9c63a4d40ee2).
+See what [updated](https://github.com/fire-square/fire-square-style/compare/0b95566440903e40ebde0b43578b9c63a4d40ee2...master).
