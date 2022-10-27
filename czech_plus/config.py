@@ -39,10 +39,6 @@ class Config:
         """Setup config instance."""
         return cls(LogSettings(LogLevel.DEBUG, False))
 
-    @property
-    def in_app(self):
-        return False  # TODO make it
-
 
 config: Config = Config.setup()
 """Initialised config variable."""
