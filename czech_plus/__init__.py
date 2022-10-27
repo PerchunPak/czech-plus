@@ -1,12 +1,14 @@
 """Main package for ``czech-plus`` addon."""
+import sys
 import typing
 
 from loguru import logger
-import sys
+
 from czech_plus import config
 
 
 def setup_logging() -> None:
+    """Setup logging for the addon."""
     kwargs: dict[str, typing.Any] = {}  # type: ignore[misc] # Explicit "Any" is not allowed
 
     if config.config.logging.level <= config.LogLevel.DEBUG:

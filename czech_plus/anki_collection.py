@@ -17,6 +17,7 @@ class LazyCollectionProxy:
 
     This is also lazy because Anki doesn't add ``mw`` variable to globals in import time.
     """
+
     def __init__(self) -> None:
         # if you found this variable name confusing, as type name is different - this is how Anki works here
         # see https://addon-docs.ankiweb.net/the-anki-module.html#the-collection
@@ -37,4 +38,4 @@ class LazyCollectionProxy:
         return getattr(self.__main_window, item)
 
 
-collection: anki.collection.Collection = LazyCollectionProxy()
+collection: anki.collection.Collection = LazyCollectionProxy()  # type: ignore[assignment]

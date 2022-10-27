@@ -4,7 +4,10 @@ from enum import IntEnum
 
 
 class LogLevel(IntEnum):
+    """Log level for the addon."""
+
     TRACE = 5
+    """Use only for tracing error without a debugger."""
     DEBUG = 10
     INFO = 20
     SUCCESS = 25
@@ -15,17 +18,25 @@ class LogLevel(IntEnum):
 
 @dataclass(frozen=True)
 class LogSettings:
+    """Settings for logs."""
+
     level: LogLevel
+    """Log level for the app."""
     json: bool
+    """Upload logs into JSON."""
 
 
 @dataclass(frozen=True)
 class Config:
+    """Config for the addon."""
+
     # TODO implement actual config
     logging: LogSettings
+    """Settings for logs."""
 
     @classmethod
     def setup(cls) -> "Config":
+        """Setup config instance."""
         return cls(LogSettings(LogLevel.DEBUG, False))
 
     @property
@@ -34,3 +45,4 @@ class Config:
 
 
 config: Config = Config.setup()
+"""Initialised config variable."""
