@@ -15,15 +15,13 @@ from czech_plus.logic.processor.implementations import (
     verb as verb_implementation,
 )
 
-_any_word: typing_extensions.TypeAlias = typing.Union[models.NounWord, models.VerbWord, models.AdjectiveWord]
 
-
-def process_word_or_card(word_or_card: typing.Union[list[_any_word], _any_word]) -> Iterator[str]:
+def process_word_or_card(word_or_card: typing.Union[list[models.AnyWord], models.AnyWord]) -> Iterator[str]:
     """Process word or card."""
     word_was_provided = False
     if isinstance(word_or_card, models.BaseWord):
         word_was_provided = True
-        card = [typing.cast(_any_word, word_or_card)]
+        card = [typing.cast(models.AnyWord, word_or_card)]
     else:
         card = word_or_card
     del word_or_card

@@ -4,6 +4,8 @@ import typing
 from abc import ABC
 from dataclasses import dataclass
 
+import typing_extensions
+
 
 class MultiValueEnum(enum.Enum):
     """Base class for Enum with multiple values."""
@@ -89,3 +91,6 @@ class AdjectiveWord(BaseWord):
     """Class for representation of adjective words."""
 
     completion_of_comparison_degrees: str
+
+
+AnyWord: typing_extensions.TypeAlias = typing.Union[NounWord, VerbWord, AdjectiveWord]
