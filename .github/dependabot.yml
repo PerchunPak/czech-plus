@@ -41,6 +41,11 @@ updates:
     - dependency-name: "pytest-randomly"
     - dependency-name: "Faker"
     - dependency-name: "GitPython"
+- package-ecosystem: pip
+  directory: "/czech_plus/_vendor"
+  schedule:
+    interval: daily
+    time: "00:00"
 
 - package-ecosystem: github-actions
   directory: "/"

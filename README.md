@@ -45,6 +45,7 @@ If you use Windows, open PowerShell with admin privileges and use:
 
 ```bash
 poetry install
+poerty run vendoring sync
 ```
 
 ### Configuration

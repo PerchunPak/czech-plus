@@ -17,8 +17,10 @@ repository = "https://github.com/PerchunPak/czech-plus"
 python = "~3.9"
 
 aqt = {extras = ["qt6"], version = "~2"}
-loguru = "~0.6"
+
 typing-extensions = "~4"
+# see `czech_plus._vendor`'s README
+vendoring = "~1.2"
 
 
 [tool.poetry.group.make.dependencies]
@@ -64,6 +66,19 @@ optional = true
 requests = "~2.28"
 GitPython = "~3.1"
 
+
+[tool.vendoring]
+destination = "czech_plus/_vendor/"
+requirements = "czech_plus/_vendor/requirements.txt"
+namespace = "czech_plus._vendor"
+
+protected-files = ["__init__.py", "README.md", "requirements.txt"]
+
+
+[tool.vendoring.transformations]
+substitute = [
+  {match = 'import win32_setctime', replace = 'from czech_plus._vendor import win32_setctime'}
+]
 
 [tool.black]
 line-length = 120

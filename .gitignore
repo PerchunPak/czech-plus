@@ -1,4 +1,9 @@
 
+czech_plus/_vendor/*
+!czech_plus/_vendor/requirements.txt
+!czech_plus/_vendor/README.md
+!czech_plus/_vendor/__init__.py
+
 # Created by https://www.toptal.com/developers/gitignore/api/linux,python,windows,visualstudiocode,pycharm+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,python,windows,visualstudiocode,pycharm+all
 

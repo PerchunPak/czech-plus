@@ -2,7 +2,7 @@
 import sys
 import typing
 
-from loguru import logger
+from czech_plus._vendor.loguru import logger
 
 from czech_plus import config
 
