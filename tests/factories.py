@@ -27,16 +27,14 @@ class VerbWordFactory(factory.Factory):
         model = models.VerbWord
 
     czech: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
-    _preposition_is_none: bool = factory.fuzzy.FuzzyAttribute(faker.pybool)
-    preposition_and_case: list[tuple[typing.Optional[str], models.Case]] = False  # type: ignore[assignment] # will be set in _create
+    preposition_and_case: list[tuple[typing.Optional[str], models.Case]] = None  # type: ignore[assignment] # will be set in _create
     translation: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
     future_form: bool = factory.fuzzy.FuzzyAttribute(faker.pybool)
 
     @classmethod
-    def _create(cls, model_class, *args, **kwargs: dict[str, typing.Any]) -> models.VerbWord:  # type: ignore[misc]
-        _preposition_is_none: bool = kwargs.pop("_preposition_is_none")  # type: ignore[assignment]
-        kwargs["preposition_and_case"] = [  # type: ignore[assignment]
-            (faker.pystr() if _preposition_is_none is True else None, faker.enum(models.Case))
+    def _create(cls, model_class, *args, _preposition_is_none: typing.Callable[[], bool] = faker.pybool, **kwargs: typing.Any) -> models.VerbWord:  # type: ignore[misc]
+        kwargs["preposition_and_case"] = [
+            (faker.pystr() if _preposition_is_none() is True else None, faker.enum(models.Case))
             for _ in range(faker.pyint(1, 5))
         ]
         return super()._create(model_class, *args, **kwargs)  # type: ignore[no-any-return]

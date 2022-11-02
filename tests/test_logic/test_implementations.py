@@ -30,7 +30,9 @@ def test_process_noun(word: models.NounWord) -> None:
         next(iterator)
 
 
-@pytest.mark.parametrize("word", [factories.VerbWordFactory(_preposition_is_none=True), factories.VerbWordFactory()])
+@pytest.mark.parametrize(
+    "word", [factories.VerbWordFactory(_preposition_is_none=lambda: True), factories.VerbWordFactory()]
+)
 def test_process_verb(word: models.VerbWord) -> None:
     """Tests :func:`czech.logic.processor.implementations.verb.process`."""
     iterator = verb.process([word])
