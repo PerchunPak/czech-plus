@@ -151,6 +151,7 @@ napoleon_use_admonition_for_references = True
 autoapi_dirs = ["../czech_plus"]
 autoapi_template_dir = "_autoapi_templates"
 autoapi_root = "api"
+autoapi_ignore = ["*czech_plus/_vendor/*"]
 
 # Third-party projects documentation references:
 intersphinx_mapping = {
