@@ -1,5 +1,5 @@
 """Module with some factories used in tests."""
-import typing
+import typing as t
 
 import factory.fuzzy
 import faker as faker_package
@@ -7,6 +7,18 @@ import faker as faker_package
 from czech_plus import models
 
 faker = faker_package.Faker()
+
+
+class WordFactory(factory.Factory):
+    """Factory for any subclass of :class:`~czech.models.BaseWord` model."""
+
+    class Meta:  # noqa: D106
+        model = models.BaseWord
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        """Create random subclass of :class:`~czech.models.BaseWord` model."""
+        return faker.random_element((NounWordFactory, VerbWordFactory, AdjectiveWordFactory))()
 
 
 class NounWordFactory(factory.Factory):
@@ -27,12 +39,12 @@ class VerbWordFactory(factory.Factory):
         model = models.VerbWord
 
     czech: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
-    preposition_and_case: list[tuple[typing.Optional[str], models.Case]] = None  # type: ignore[assignment] # will be set in _create
+    preposition_and_case: list[tuple[t.Optional[str], models.Case]] = None  # type: ignore[assignment] # will be set in _create
     translation: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
     future_form: bool = factory.fuzzy.FuzzyAttribute(faker.pybool)
 
     @classmethod
-    def _create(cls, model_class, *args, _preposition_is_none: typing.Callable[[], bool] = faker.pybool, **kwargs: typing.Any) -> models.VerbWord:  # type: ignore[misc]
+    def _create(cls, model_class, *args, _preposition_is_none: t.Callable[[], bool] = faker.pybool, **kwargs: t.Any) -> models.VerbWord:  # type: ignore[misc]
         kwargs["preposition_and_case"] = [
             (faker.pystr() if _preposition_is_none() is True else None, faker.enum(models.Case))
             for _ in range(faker.pyint(1, 5))
