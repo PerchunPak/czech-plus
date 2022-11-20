@@ -29,7 +29,10 @@ Fields
     equal to number of words in :class:`~VerbCard.czech` field.
 
     You also can set preposition and case for the future form of the word in
-    ``[`` and ``]`` brackets. Syntax the same, so you can set multiple words.
+    ``[`` and ``]`` brackets. You can't set multiple words in one brackets, all
+    formatting are ignored there. You can se multiple future forms by setting
+    multiple brackets. For example: ``word [future1] [future2]`` and it will
+    be rendered to ``word [future1, future2]``\ .
 
   .. attribute:: translation
 
@@ -39,9 +42,10 @@ Fields
 
     Lets use ``koukat (se), dívat se`` for :attr:`~VerbCard.czech` field. Note
     that ``(se)`` (and without brackets too) will be count as a part of word.
-    We don't parse ``se`` and ``si`` for words. Here it's in brackets because
-    it's optional. And lets set for :attr:`~VerbCard.preposition_and_case` -
-    ``na 4, !kam?, po 7. na 4, z 2``. This addon will give
+    We don't have special parsing for ``se`` and ``si`` in words. In example
+    they're in brackets because they're optional. And lets set for
+    :attr:`~VerbCard.preposition_and_case` - ``na 4, !kam?, po 7. na 4, z 2``.
+    This addon will give
     ``koukat (se) (na koho? co?, kam?, po kým? čím?), dívat se (na koho? co?, z koho? čeho?)``
     in the result.
 

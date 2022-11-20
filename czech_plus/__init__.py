@@ -14,6 +14,7 @@ def setup_logging() -> None:
     if config.config.logging.level <= config.LogLevel.DEBUG:
         kwargs["diagnose"] = True
 
+    logger.remove()
     logger.add(
         sys.stdout,
         level=config.config.logging.level,
@@ -23,6 +24,7 @@ def setup_logging() -> None:
         backtrace=True,
         **kwargs,
     )
+    logger.debug("Logging was setup!")
 
 
 setup_logging()

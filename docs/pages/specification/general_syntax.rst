@@ -18,9 +18,7 @@ be counted as one word, even if word separator is ``,``.
 
 Also lets look to ``word, !other word, third``. First word will be parsed as
 expected, we will not touch the second word and third word is also parsed as
-expected. ``!`` works only until next word starts. You can specify ``!`` only
-in the start of the word, otherwise - this will be counted as a part of the
-word and will not be removed.
+expected. ``!`` works only until next word starts.
 
 ****************
 Separating words
