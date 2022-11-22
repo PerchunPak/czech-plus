@@ -27,4 +27,8 @@ def setup_logging() -> None:
     logger.debug("Logging was setup!")
 
 
-setup_logging()
+def main() -> None:
+    setup_logging()
+
+
+main()
