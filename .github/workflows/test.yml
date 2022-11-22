@@ -39,7 +39,7 @@ jobs:
         poetry install --without docs --with github_hooks
 
     - name: Run checks
-      run: make test ci=1
+      run: poetry run make test ci=1
 
     # Upload coverage to codecov: https://codecov.io/
     - name: Upload coverage to Codecov
@@ -64,7 +64,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.9'
         cache: 'poetry'
 
     - name: Install dependencies

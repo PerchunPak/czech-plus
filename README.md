@@ -27,7 +27,7 @@ cd czech-plus
 
 ### Installing `poetry`
 
-Next we need install `poetry` with [recomended way](https://python-poetry.org/docs/master/#installation).
+Next we need install `poetry` with [recommended way](https://python-poetry.org/docs/master/#installation).
 
 If you use Linux, use command:
 
@@ -62,6 +62,6 @@ Use Anki's addon manager.
 
 ## Thanks
 
-This project was generated with [fire-square-style](https://github.com/fire-square/fire-square-style).
-Current template version: [0b95566440903e40ebde0b43578b9c63a4d40ee2](https://github.com/fire-square/fire-square-style/tree/0b95566440903e40ebde0b43578b9c63a4d40ee2).
-See what [updated](https://github.com/fire-square/fire-square-style/compare/0b95566440903e40ebde0b43578b9c63a4d40ee2...master).
+This project was generated with [python-template](https://github.com/PerchunPak/python-template).
+Current template version: [42e146d16bc3df1f6d6174c9b1f88d024afd8f00](https://github.com/PerchunPak/python-template/tree/42e146d16bc3df1f6d6174c9b1f88d024afd8f00).
+See what [updated](https://github.com/PerchunPak/python-template/compare/42e146d16bc3df1f6d6174c9b1f88d024afd8f00...master).
