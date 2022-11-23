@@ -28,6 +28,7 @@ def setup_logging() -> None:
 
 
 def main() -> None:
+    """Main function to run entire app."""
     setup_logging()
 
 
