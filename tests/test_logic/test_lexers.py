@@ -130,8 +130,7 @@ def test_with_examples(
         else:
             parsed_output = output
 
-        key = faker.word()
-        assert class_to_test({key: input}).lex()[key] == parsed_output
+        assert list(class_to_test().lex(input)) == parsed_output
 
 
 @pytest.mark.parametrize(
@@ -168,4 +167,4 @@ def test_with_unsupported_examples(
     If this test fails, just move parametrize entry to `test_with_examples`.
     """
     for class_to_test in classes_to_test:
-        assert list(class_to_test({faker.word(): input}).lex()) != output
+        assert list(class_to_test().lex(input)) != output

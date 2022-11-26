@@ -24,106 +24,98 @@ class BaseLexer(abc.ABC):
     WORD_ESCAPE_SYMBOL = "!"
     SKIP_SYMBOL = "_"
 
-    def __init__(self, raw: dict[str, str]) -> None:
-        self.__raw = raw
-
-    def lex(self) -> dict[str, list[t.Union[tokens.BaseToken, str]]]:
-        r"""Lex :attr:`~czech_plus.logic.lexer.BaseLexer.__raw` attribute.
+    def lex(self, string: str) -> Iterator[t.Union[tokens.BaseToken, str]]:
+        r"""Lex ``string`` argument.
 
         Yields:
             :mod:`Token <czech_plus.logic.lexer.tokens>` or :obj:`string <str>`\ .
         """
-        logger.trace("Lexing card...")
-        result: dict[str, list[t.Union[tokens.BaseToken, str]]] = {}
-        for key, string in self.__raw.items():
-            logger.debug(f"Lexing: {string}")
-            result[key] = []
-            rerun, skip = False, False
-            temp_string = ""
-            on_next_hook: t.Optional[_ON_NEXT_HOOK] = None
+        logger.debug(f"Lexing: {string}")
+        rerun, skip = False, False
+        temp_string = ""
+        on_next_hook: t.Optional[_ON_NEXT_HOOK] = None
 
-            for i, symbol in enumerate(string):
-                while True:
-                    logger.debug(f"Lexing {symbol!r} (index: {i}).")
-                    if skip:
-                        logger.debug("skip is True")
-                        skip = False
-                        break
+        for i, symbol in enumerate(string):
+            while True:
+                logger.debug(f"Lexing {symbol!r} (index: {i}) in {string=}")
+                if skip:
+                    logger.debug("skip is True")
+                    skip = False
+                    break
 
-                    if on_next_hook is not None:
-                        logger.debug("on_next_hook is not None")
-                        while True:
-                            try:
-                                token = on_next_hook.send(symbol)
-                            except StopIteration as exception:
-                                logger.debug(f"`on_next_hook` raised StopIteration with values: {exception.value}")
-                                rerun, skip = exception.value  # return statement in generator
-                                on_next_hook = None
-                                break
-                            else:
-                                logger.debug(f"`on_next_hook` returned: {token=}")
-                                if token is None:
-                                    logger.trace("token is None")
-                                    break
-
-                                if temp_string != "":
-                                    logger.debug(f"temp_string != '' ({temp_string=})")
-                                    if isinstance(token, tokens.FutureFormToken):
-                                        logger.trace(f"isinstance(token, tokens.FutureFormToken) is True")
-                                        temp_string = temp_string[:-1]
-                                        if temp_string == "":
-                                            logger.trace("After stripping temp string, it's empty.")
-                                            result[key].append(token)
-                                            continue
-
-                                    result[key].append(temp_string)
-                                    temp_string = ""
-                                result[key].append(token)
-
-                        logger.trace(f"{rerun=}")
-                        if not rerun:
-                            break
-                        rerun = False
-
-                    hook = self._hooks.get(symbol)
-                    logger.debug(f"Got {hook=} on {symbol=}")
-                    if hook is None:
-                        logger.trace("hook is None")
-                        temp_string += symbol
-                        break
-
-                    handle_hook_generator = self._handle_hook(hook)
+                if on_next_hook is not None:
+                    logger.debug("on_next_hook is not None")
                     while True:
-                        logger.trace(f"Handling `handle_hook_generator` with {hook=}")
                         try:
-                            token = next(handle_hook_generator)
+                            token = on_next_hook.send(symbol)
                         except StopIteration as exception:
-                            logger.debug(f"`handle_hook_generator` raised StopIteration with values: {exception.value}")
+                            logger.debug(f"`on_next_hook` raised StopIteration with values: {exception.value}")
                             rerun, skip = exception.value  # return statement in generator
-                            assert rerun is False, "This doesn't make sense if you rerun symbol in first iteration!"
+                            on_next_hook = None
                             break
                         else:
-                            logger.debug(f"`handle_hook_generator` returned: {token=}")
+                            logger.debug(f"`on_next_hook` returned: {token=}")
                             if token is None:
                                 logger.trace("token is None")
-                                on_next_hook = handle_hook_generator
                                 break
 
                             if temp_string != "":
-                                logger.trace("temp_string != ''")
-                                result[key].append(temp_string)
-                                temp_string = ""
-                            result[key].append(token)
-                    logger.debug(f"Ended lexing for {symbol!r} (index: {i}).")
-                    break  # pragma: no cover # somewhy doesn't catch this string
+                                logger.debug(f"temp_string != '' ({temp_string=})")
+                                if isinstance(token, tokens.FutureFormToken):
+                                    logger.trace(f"isinstance(token, tokens.FutureFormToken) is True")
+                                    temp_string = temp_string[:-1]
+                                    if temp_string == "":
+                                        logger.trace("After stripping temp string, it's empty.")
+                                        yield token
+                                        continue
 
-            if on_next_hook is not None:
-                logger.debug("on_next_hook is not None, but lexed full string.")
-                result[key].append(t.cast(tokens.BaseToken, on_next_hook.send(None)))
-            if temp_string != "":
-                logger.debug("temp_string != '', but lexed full string.")
-                result[key].append(temp_string)
-        return result
+                                yield temp_string
+                                temp_string = ""
+                            yield token
+
+                    logger.trace(f"{rerun=}")
+                    if not rerun:
+                        break
+                    rerun = False
+
+                hook = self._hooks.get(symbol)
+                logger.debug(f"Got {hook=} on {symbol=}")
+                if hook is None:
+                    logger.trace("hook is None")
+                    temp_string += symbol
+                    break
+
+                handle_hook_generator = self._handle_hook(hook)
+                while True:
+                    logger.trace(f"Handling `handle_hook_generator` with {hook=}")
+                    try:
+                        token = next(handle_hook_generator)
+                    except StopIteration as exception:
+                        logger.debug(f"`handle_hook_generator` raised StopIteration with values: {exception.value}")
+                        rerun, skip = exception.value  # return statement in generator
+                        assert rerun is False, "This doesn't make sense if you rerun symbol in first iteration!"
+                        break
+                    else:
+                        logger.debug(f"`handle_hook_generator` returned: {token=}")
+                        if token is None:
+                            logger.trace("token is None")
+                            on_next_hook = handle_hook_generator
+                            break
+
+                        if temp_string != "":
+                            logger.trace("temp_string != ''")
+                            yield temp_string
+                            temp_string = ""
+                        yield token
+                logger.debug(f"Ended lexing for {symbol!r} (index: {i}).")
+                break  # pragma: no cover # somewhy doesn't catch this string
+
+        if on_next_hook is not None:
+            logger.debug("on_next_hook is not None, but lexed full string.")
+            yield t.cast(tokens.BaseToken, on_next_hook.send(None))
+        if temp_string != "":
+            logger.debug("temp_string != '', but lexed full string.")
+            yield temp_string
 
     def _handle_hook(self, hook: _HOOK_SIGNATURE) -> _ON_NEXT_HOOK:
         r"""Handle hook and yield result.
