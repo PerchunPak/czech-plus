@@ -130,7 +130,8 @@ def test_with_examples(
         else:
             parsed_output = output
 
-        assert list(class_to_test({faker.word(): input}).lex()) == parsed_output
+        key = faker.word()
+        assert class_to_test({key: input}).lex()[key] == parsed_output
 
 
 @pytest.mark.parametrize(

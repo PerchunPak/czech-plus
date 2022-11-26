@@ -27,15 +27,17 @@ class BaseLexer(abc.ABC):
     def __init__(self, raw: dict[str, str]) -> None:
         self.__raw = raw
 
-    def lex(self) -> Iterator[t.Union[tokens.BaseToken, str]]:
+    def lex(self) -> dict[str, list[t.Union[tokens.BaseToken, str]]]:
         r"""Lex :attr:`~czech_plus.logic.lexer.BaseLexer.__raw` attribute.
 
         Yields:
             :mod:`Token <czech_plus.logic.lexer.tokens>` or :obj:`string <str>`\ .
         """
         logger.trace("Lexing card...")
-        for string in self.__raw.values():
+        result: dict[str, list[t.Union[tokens.BaseToken, str]]] = {}
+        for key, string in self.__raw.items():
             logger.debug(f"Lexing: {string}")
+            result[key] = []
             rerun, skip = False, False
             temp_string = ""
             on_next_hook: t.Optional[_ON_NEXT_HOOK] = None
@@ -71,12 +73,12 @@ class BaseLexer(abc.ABC):
                                         temp_string = temp_string[:-1]
                                         if temp_string == "":
                                             logger.trace("After stripping temp string, it's empty.")
-                                            yield token
+                                            result[key].append(token)
                                             continue
 
-                                    yield temp_string
+                                    result[key].append(temp_string)
                                     temp_string = ""
-                                yield token
+                                result[key].append(token)
 
                         logger.trace(f"{rerun=}")
                         if not rerun:
@@ -109,18 +111,19 @@ class BaseLexer(abc.ABC):
 
                             if temp_string != "":
                                 logger.trace("temp_string != ''")
-                                yield temp_string
+                                result[key].append(temp_string)
                                 temp_string = ""
-                            yield token
+                            result[key].append(token)
                     logger.debug(f"Ended lexing for {symbol!r} (index: {i}).")
                     break  # pragma: no cover # somewhy doesn't catch this string
 
             if on_next_hook is not None:
                 logger.debug("on_next_hook is not None, but lexed full string.")
-                yield t.cast(tokens.BaseToken, on_next_hook.send(None))
+                result[key].append(t.cast(tokens.BaseToken, on_next_hook.send(None)))
             if temp_string != "":
                 logger.debug("temp_string != '', but lexed full string.")
-                yield temp_string
+                result[key].append(temp_string)
+        return result
 
     def _handle_hook(self, hook: _HOOK_SIGNATURE) -> _ON_NEXT_HOOK:
         r"""Handle hook and yield result.
