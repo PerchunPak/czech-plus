@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from enum import IntEnum
 
+from czech_plus.utils import Singleton
+
 
 class LogLevel(IntEnum):
     """Log level for the addon."""
@@ -103,7 +105,7 @@ class CardsSettings:
 
 
 @dataclass(frozen=True)
-class Config:
+class Config(metaclass=Singleton):
     """Config for the addon."""
 
     # TODO implement actual config
@@ -116,7 +118,3 @@ class Config:
     def setup(cls) -> "Config":
         """Setup config instance."""
         return cls(LogSettings(LogLevel.DEBUG, False))
-
-
-config: Config = Config.setup()
-"""Initialised config variable."""
