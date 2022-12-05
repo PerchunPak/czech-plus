@@ -108,13 +108,18 @@ class CardsSettings:
 class Config(metaclass=Singleton):
     """Config for the addon."""
 
-    # TODO implement actual config
     logging: LogSettings = LogSettings()
     """Settings for logs."""
     cards: CardsSettings = CardsSettings()
     """Settings for cards."""
 
-    @classmethod
-    def setup(cls) -> "Config":
-        """Setup config instance."""
-        return cls(LogSettings(LogLevel.DEBUG, False))
+    def __post_init__(self) -> None:
+        """Post init hook.
+
+        We use this method of setting attributes because we use frozen
+        dataclass. This was found on https://github.com/python/cpython/issues/82625.
+
+        Todo:
+            In future, this will contain actual logic for config loading.
+        """
+        object.__setattr__(self, "logging", LogSettings(LogLevel.TRACE))
