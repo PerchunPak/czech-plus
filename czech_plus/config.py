@@ -120,6 +120,6 @@ class Config(metaclass=Singleton):
         dataclass. This was found on https://github.com/python/cpython/issues/82625.
 
         Todo:
-            In future, this will contain actual logic for config loading.
+            In the future, this will contain actual logic for config loading.
         """
         object.__setattr__(self, "logging", LogSettings(LogLevel.TRACE))

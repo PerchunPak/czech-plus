@@ -14,11 +14,8 @@ class MultiValueEnum(enum.Enum):
     def __new__(cls, *values):
         """Construct new instance of the class."""
         obj = object.__new__(cls)
-        # first value is canonical value
-        obj._value_ = values[0]
-        for other_value in values[1:]:
+        for other_value in values:
             cls._value2member_map_[other_value] = obj
-        obj._all_values = values  # type: ignore[attr-defined]
         return obj
 
     def __repr__(self):
@@ -26,7 +23,7 @@ class MultiValueEnum(enum.Enum):
         return "<%s.%s: %s>" % (
             self.__class__.__name__,
             self._name_,
-            ", ".join([repr(v) for v in self._all_values]),  # type: ignore[attr-defined]
+            ", ".join([repr(v) for v in self._value_]),
         )
 
 
@@ -63,6 +60,22 @@ class Case(MultiValueEnum):
     locative = "kom? čem?", 6
     instrumental = "kým? čím?", 7
 
+    @property
+    def questions(self) -> str:
+        r"""Get questions of the case.
+
+        Just an alias to :attr:`Case.value`\ [0].
+        """
+        return typing.cast(str, self.value[0])
+
+    @property
+    def number(self) -> int:
+        r"""Get number of the case.
+
+        Just an alias to :attr:`Case.value`\ [1].
+        """
+        return typing.cast(int, self.value[1])
+
 
 @dataclass(frozen=True)
 class BaseWord(ABC):
@@ -91,7 +104,8 @@ class VerbWord(BaseWord):
 class AdjectiveWord(BaseWord):
     """Class for representation of adjective words."""
 
-    completion_of_comparison_degrees: str
+    cocd: str
+    """Completion of Comparison Degrees."""
 
 
 AnyWord: "typing_extensions.TypeAlias" = typing.Union[NounWord, VerbWord, AdjectiveWord]

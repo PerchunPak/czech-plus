@@ -1,18 +1,12 @@
 """Module for tokens, that then used inside lexer."""
 import abc
+import typing as t
 from dataclasses import dataclass
 
 
 @dataclass
 class BaseToken(abc.ABC):
     """Base class for all tokens."""
-
-
-@dataclass
-class TokenWithContent(BaseToken, abc.ABC):
-    """Base class for all tokens, which contain ``content`` field."""
-
-    content: str
 
 
 @dataclass
@@ -26,8 +20,10 @@ class AdditionalSeparatorToken(BaseToken):
 
 
 @dataclass
-class EscapedToken(TokenWithContent):
+class EscapedToken(BaseToken):
     """Token for escape symbol."""
+
+    content: str
 
 
 @dataclass
@@ -36,5 +32,7 @@ class SkipToken(BaseToken):
 
 
 @dataclass
-class FutureFormToken(TokenWithContent):
+class FutureFormToken(BaseToken):
     """Token for verb's future form."""
+
+    content: t.Iterator[t.Union[BaseToken, str]]

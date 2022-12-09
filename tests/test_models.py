@@ -25,8 +25,20 @@ _CASE_TO_NUMBER = {
 
 @pytest.mark.parametrize("case", models.Case)
 def test_case_enum_gives_correct_value(case):
-    """Tests that :class:`czech.models.Case`.value returns question, not a tuple/number."""
-    assert case.value == _CASE_TO_QUESTION[case]
+    """Tests that :class:`czech.models.Case`.value returns tuple with question and number."""
+    assert case.value == (_CASE_TO_QUESTION[case], _CASE_TO_NUMBER[case])
+
+
+@pytest.mark.parametrize("case", models.Case)
+def test_case_enum_gives_correct_questions(case):
+    """Tests that :meth:`czech.models.Case.question` returns correct questions."""
+    assert case.questions == _CASE_TO_QUESTION[case]
+
+
+@pytest.mark.parametrize("case", models.Case)
+def test_case_enum_gives_correct_number(case):
+    """Tests that :meth:`czech.models.Case.number` returns correct number."""
+    assert case.number == _CASE_TO_NUMBER[case]
 
 
 @pytest.mark.parametrize("case", models.Case)

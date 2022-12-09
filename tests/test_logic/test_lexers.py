@@ -1,114 +1,113 @@
 """Tests for lexer (:mod:`czech_plus.logic.lexer` package)."""
 import typing as t
-from collections.abc import Callable
 
 import pytest
 from faker import Faker
 
 from czech_plus.logic import lexer
 from czech_plus.logic.lexer import tokens
+from tests.test_logic import FakesGenerator
 
 _ANY_LEXER = [lexer.BaseLexer, lexer.NounLexer, lexer.VerbLexer, lexer.AdjectiveLexer]
 _ANY_LEXER_EXCEPT_VERB = [lexer.BaseLexer, lexer.NounLexer, lexer.AdjectiveLexer]
 
 
-class __BaseGenerator:
-    __cz_faker = Faker("cs_CZ")
-
-    def __init__(self, __method: str, *__args, **__kwargs) -> None:
-        self.__method: Callable[[t.Any], str] = getattr(self.__cz_faker, __method)  # type: ignore[misc] # Explicit Any
-        self.__args, self.__kwargs = __args, __kwargs
-        self.__vault: dict[int, str] = {}
-
-    def __getitem__(self, key: int) -> str:
-        if (item := self.__vault.get(key)) is not None:
-            return item
-        value = self.__method(*self.__args, **self.__kwargs)
-        self.__vault[key] = value
-        return value
-
-
-__sentence_gen = __BaseGenerator("sentence")
-__word_gen = __BaseGenerator("word")
-__symbol_gen = __BaseGenerator("pystr", 1, 1)
+__sentence = FakesGenerator("sentence")
+__word = FakesGenerator("word")
+__symbol = FakesGenerator("pystr", 1, 1)
 
 
 @pytest.mark.parametrize(
     "classes_to_test,input,output",
     [
-        (_ANY_LEXER, f"\\{__symbol_gen[1]}", [tokens.EscapedToken(__symbol_gen[1])]),
-        (_ANY_LEXER, f"!{__word_gen[1]}", [tokens.EscapedToken(__word_gen[1])]),
+        (_ANY_LEXER, f"\\{__symbol[1]}", [tokens.EscapedToken(__symbol[1])]),
+        (_ANY_LEXER, f"!{__word[1]}", [tokens.EscapedToken(__word[1])]),
         (
             _ANY_LEXER,
-            f"!{__word_gen[2]}, {__word_gen[3]}",
-            [tokens.EscapedToken(__word_gen[2]), tokens.SeparatorToken(), __word_gen[3]],
+            f"!{__word[2]}, {__word[3]}",
+            [tokens.EscapedToken(__word[2]), tokens.SeparatorToken(), __word[3]],
         ),
         (
             _ANY_LEXER,
-            f"{__word_gen[4]}, !{__word_gen[5]}, {__word_gen[6]}",
+            f"{__word[4]}, !{__word[5]}, {__word[6]}",
             [
-                __word_gen[4],
+                __word[4],
                 tokens.SeparatorToken(),
-                tokens.EscapedToken(__word_gen[5]),
+                tokens.EscapedToken(__word[5]),
                 tokens.SeparatorToken(),
-                __word_gen[6],
+                __word[6],
             ],
         ),
         (
             _ANY_LEXER,
-            f"{__word_gen[7]}\\, {__word_gen[8]}",
-            [__word_gen[7], tokens.EscapedToken(","), f" {__word_gen[8]}"],
+            f"{__word[7]}\\, {__word[8]}",
+            [__word[7], tokens.EscapedToken(","), f" {__word[8]}"],
         ),
-        (_ANY_LEXER, f"{__word_gen[9]}, {__word_gen[10]}", [__word_gen[9], tokens.SeparatorToken(), __word_gen[10]]),
+        (_ANY_LEXER, f"{__word[9]}, {__word[10]}", [__word[9], tokens.SeparatorToken(), __word[10]]),
         (
             [lexer.VerbLexer],
-            f"{__word_gen[11]}, {__word_gen[12]}. {__word_gen[13]}",
+            f"{__word[11]}, {__word[12]}. {__word[13]}",
             [
-                __word_gen[11],
+                __word[11],
                 tokens.AdditionalSeparatorToken(),
-                __word_gen[12],
+                __word[12],
                 tokens.SeparatorToken(),
-                __word_gen[13],
+                __word[13],
             ],
         ),
         (_ANY_LEXER, "_", [tokens.SkipToken()]),
         (
             _ANY_LEXER,
-            f"{__word_gen[14]}, _, {__word_gen[15]}",
-            [__word_gen[14], tokens.SeparatorToken(), tokens.SkipToken(), tokens.SeparatorToken(), __word_gen[15]],
+            f"{__word[14]}, _, {__word[15]}",
+            [__word[14], tokens.SeparatorToken(), tokens.SkipToken(), tokens.SeparatorToken(), __word[15]],
         ),
-        ([lexer.VerbLexer], f"[{__word_gen[15]}]", [tokens.FutureFormToken(__word_gen[15])]),
+        ([lexer.VerbLexer], f"[{__word[15]}]", [tokens.FutureFormToken([__word[15]])]),
         (
             [lexer.VerbLexer],
-            f"{__word_gen[16]} [{__word_gen[17]}]",
-            [__word_gen[16], tokens.FutureFormToken(__word_gen[17])],
-        ),
-        (
-            [lexer.VerbLexer],
-            f"{__word_gen[18]} [{__word_gen[19]}]. {__word_gen[20]}",
-            [__word_gen[18], tokens.FutureFormToken(__word_gen[19]), tokens.SeparatorToken(), __word_gen[20]],
+            f"{__word[16]} [{__word[17]}]",
+            [__word[16], tokens.FutureFormToken([__word[17]])],
         ),
         (
             [lexer.VerbLexer],
-            f"{__word_gen[21]} [{__word_gen[22]}]. {__word_gen[23]} [{__word_gen[24]}]",
+            f"{__word[18]} [{__word[19]}]. {__word[20]}",
+            [__word[18], tokens.FutureFormToken([__word[19]]), tokens.SeparatorToken(), __word[20]],
+        ),
+        (
+            [lexer.VerbLexer],
+            f"{__word[21]} [{__word[22]}]. {__word[23]} [{__word[24]}]",
             [
-                __word_gen[21],
-                tokens.FutureFormToken(__word_gen[22]),
+                __word[21],
+                tokens.FutureFormToken([__word[22]]),
                 tokens.SeparatorToken(),
-                __word_gen[23],
-                tokens.FutureFormToken(__word_gen[24]),
+                __word[23],
+                tokens.FutureFormToken([__word[24]]),
             ],
         ),
         (
             [lexer.VerbLexer],
-            f"{__word_gen[25]} [{__word_gen[26]}] [{__word_gen[27]}]",
-            [__word_gen[25], tokens.FutureFormToken(__word_gen[26]), tokens.FutureFormToken(__word_gen[27])],
+            f"[{__word[25]}. {__word[26]}]",
+            [tokens.FutureFormToken([__word[25], tokens.SeparatorToken(), __word[26]])],
+        ),
+        (
+            [lexer.VerbLexer],
+            f"[{__word[27]}, {__word[28]}]",
+            [tokens.FutureFormToken([__word[27], tokens.AdditionalSeparatorToken(), __word[28]])],
+        ),
+        (
+            [lexer.VerbLexer],
+            f"[{__word[29]}, {__word[30]}. {__word[31]}]",
+            [
+                tokens.FutureFormToken(
+                    [__word[29], tokens.AdditionalSeparatorToken(), __word[30], tokens.SeparatorToken(), __word[31]]
+                )
+            ],
         ),
         (_ANY_LEXER, "\\", [tokens.EscapedToken("")]),
-        ([lexer.VerbLexer], "[", [tokens.FutureFormToken("")]),
+        (_ANY_LEXER, f"{__word[32]} !{__word[33]}", [__word[32] + " ", tokens.EscapedToken(__word[33])]),
+        ([lexer.VerbLexer], "[", [tokens.FutureFormToken([])]),
         # real examples from my vocabulary
         (_ANY_LEXER, "blůza, halenka", ["blůza", tokens.SeparatorToken(), "halenka"]),
-        ([lexer.VerbLexer], "ušklíbat se [ušklíbnout se]", ["ušklíbat se", tokens.FutureFormToken("ušklíbnout se")]),
+        ([lexer.VerbLexer], "ušklíbat se [ušklíbnout se]", ["ušklíbat se", tokens.FutureFormToken(["ušklíbnout se"])]),
     ],
 )
 def test_with_examples(
@@ -130,7 +129,11 @@ def test_with_examples(
         else:
             parsed_output = output
 
-        assert list(class_to_test().lex(input)) == parsed_output
+        lexed = list(class_to_test().lex(input))
+        for i, item in enumerate(lexed):
+            if isinstance(item, tokens.FutureFormToken):
+                t.cast(tokens.FutureFormToken, lexed[i]).content = t.cast(t.Iterator, list(item.content))  # type: ignore[type-arg]
+        assert lexed == parsed_output
 
 
 @pytest.mark.parametrize(
@@ -138,24 +141,24 @@ def test_with_examples(
     [
         (
             [lexer.VerbLexer],
-            f"{__word_gen[28]} [{__word_gen[29]}\\], {__word_gen[30]}",
-            [__word_gen[28], tokens.FutureFormToken(f"{__word_gen[29]}], {__word_gen[30]}")],
-        ),
-        (_ANY_LEXER, f"\\!{__sentence_gen[1][:-1]}!!", [tokens.EscapedToken("!"), f"{__sentence_gen[1][:-1]}!!"]),
-        (
-            _ANY_LEXER,
-            f"{__word_gen[31]}, !{__word_gen[32]}\\, {__word_gen[33]}",
-            [__word_gen[31], tokens.EscapedToken(f"{__word_gen[32]}, {__word_gen[33]}")],
-        ),
-        (
-            _ANY_LEXER,
-            f"{__word_gen[34]}, !{__word_gen[35]}\\,",
-            [__word_gen[34], tokens.EscapedToken(f"{__word_gen[35]},")],
+            f"{__word[34]} [{__word[35]}\\]",
+            [__word[34], tokens.FutureFormToken([f"{__word[35]}]"])],
         ),
         (
             [lexer.VerbLexer],
-            f"{__word_gen[36]} [{__word_gen[37]}\\]",
-            [__word_gen[36], tokens.FutureFormToken(f"{__word_gen[37]}]")],
+            f"{__word[36]} [{__word[37]}\\], {__word[38]}",
+            [__word[36], tokens.FutureFormToken([f"{__word[37]}], {__word[38]}"])],
+        ),
+        (_ANY_LEXER, f"\\!{__sentence[1][:-1]}!!", [tokens.EscapedToken("!"), f"{__sentence[1][:-1]}!!"]),
+        (
+            _ANY_LEXER,
+            f"{__word[39]}, !{__word[40]}\\, {__word[41]}",
+            [__word[39], tokens.EscapedToken(f"{__word[40]}, {__word[41]}")],
+        ),
+        (
+            _ANY_LEXER,
+            f"{__word[42]}, !{__word[43]}\\,",
+            [__word[42], tokens.EscapedToken(f"{__word[43]},")],
         ),
     ],
 )

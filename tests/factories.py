@@ -59,5 +59,5 @@ class AdjectiveWordFactory(factory.Factory):
         model = models.AdjectiveWord
 
     czech: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
-    completion_of_comparison_degrees: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
+    cocd: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
     translation: str = factory.fuzzy.FuzzyAttribute(faker.pystr)

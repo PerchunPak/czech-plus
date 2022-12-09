@@ -114,12 +114,12 @@ class BaseLexer(abc.ABC):
                 logger.debug(f"Ended lexing for {symbol!r} (index: {i}).")
                 break  # pragma: no cover # somewhy doesn't catch this string
 
-        if on_next_hook is not None:
-            logger.debug("on_next_hook is not None, but lexed full string.")
-            yield t.cast(tokens.BaseToken, on_next_hook.send(None))
         if temp_string != "":
             logger.debug("temp_string != '', but lexed full string.")
             yield temp_string
+        if on_next_hook is not None:
+            logger.debug("on_next_hook is not None, but lexed full string.")
+            yield t.cast(tokens.BaseToken, on_next_hook.send(None))
 
     def _handle_hook(self, hook: _HOOK_SIGNATURE) -> _ON_NEXT_HOOK:
         r"""Handle hook and yield result.
@@ -275,7 +275,7 @@ class VerbLexer(BaseLexer):
                 break
             word += symbol
 
-        yield tokens.FutureFormToken(word), False, False
+        yield tokens.FutureFormToken(self.lex(word)), False, False
 
     @property
     def _hooks(self) -> dict[str, _HOOK_SIGNATURE]:

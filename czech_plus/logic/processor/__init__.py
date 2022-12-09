@@ -1,48 +1,37 @@
 """Package for processors of the words."""
-import typing
-from collections.abc import Iterator
+import typing as t
 
 from czech_plus._vendor.loguru import logger
 
-from czech_plus import models
+from czech_plus.config import Config
 from czech_plus.logic.processor.implementations import (
-    adjective as adjective_implementation,
-)
-from czech_plus.logic.processor.implementations import (
-    noun as noun_implementation,
-)
-from czech_plus.logic.processor.implementations import (
-    verb as verb_implementation,
+    adjective,
+    base,
+    noun,
+    verb,
 )
 
+__all__ = ["get_processor"]
 
-def process_word_or_card(word_or_card: typing.Union[list[models.AnyWord], models.AnyWord]) -> Iterator[str]:
-    """Process word or card."""
-    logger.trace(f"Processing word or card: {word_or_card}")
-    word_was_provided = False
-    if isinstance(word_or_card, models.BaseWord):
-        word_was_provided = True
-        logger.trace("Word was provided.")
-        card = [typing.cast(models.AnyWord, word_or_card)]
-    else:
-        logger.trace("Card was provided.")
-        card = word_or_card
-    del word_or_card
 
-    if len(card) == 0:
-        logger.trace("Card is empty, returning...")
-        return []
+def get_processor(note_type: str) -> t.Optional[base.BaseProcessor]:
+    """Get processor for the note type.
 
-    result = {  # type: ignore[operator]
-        models.NounWord: noun_implementation.process,
-        models.VerbWord: verb_implementation.process,
-        models.AdjectiveWord: adjective_implementation.process,
-    }[type(card[0])](card)
+    Args:
+        note_type: Name of the note type.
 
-    if word_was_provided:
-        processed_word = next(result)
-        logger.debug(f"Result of word processing: {processed_word}")
-        yield processed_word
-    else:
-        logger.trace("Card was given, returning iterator with results...")
-        return result
+    Returns:
+        Processor for the note type or None, if it wasn't found.
+    """
+    logger.trace(f"Getting processor for {note_type=}.")
+    config = Config()
+
+    parsers_table: dict[str, type[base.BaseProcessor]] = {
+        config.cards.nouns.note_type_name: noun.NounProcessor,
+        config.cards.verbs.note_type_name: verb.VerbProcessor,
+        config.cards.adjectives.note_type_name: adjective.AdjectiveProcessor,
+    }
+    if note_type not in parsers_table.keys():
+        return None
+
+    return parsers_table[note_type]()
