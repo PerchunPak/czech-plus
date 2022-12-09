@@ -17,13 +17,9 @@ Fields
 
     Completion of comparison degrees of the adjective. Can have any value,
     even another word. For example, if the word has irregular form. Can be
-    unset, if the adjective doesn't have comparison degrees. Number of words
-    here must be equal to number of words in :class:`~AdjectiveWord.czech`
-    field.
-
-  .. attribute:: translation
-
-    Translation of the word to your language.
+    skipped with ``_``\ , if the adjective doesn't have comparison degrees.
+    Number of words here must be equal to number of words in
+    :class:`~AdjectiveWord.czech` field.
 
   .. admonition:: Example
 
@@ -31,7 +27,7 @@ Fields
     And for :attr:`~AdjectiveWord.completion_of_comparison_degrees` - ``čí``.
     This addon will give ``hezký (čí)`` in the result.
 
-    Or if we unset :attr:`~AdjectiveWord.completion_of_comparison_degrees`
+    Or if we skip :attr:`~AdjectiveWord.completion_of_comparison_degrees`
     field, addon just will return ``hezký``.
 
 
@@ -41,5 +37,3 @@ What do we do?
 
 We just add :attr:`~AdjectiveWord.completion_of_comparison_degrees` to the end.
 See example upper.
-
-We don't touch :attr:`~VerbCard.translation` field.
