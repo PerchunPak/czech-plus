@@ -3,16 +3,20 @@ import abc
 import typing as t
 from collections.abc import Callable, Generator, Iterator
 
-import typing_extensions as te
 from czech_plus._vendor.loguru import logger
 
 from czech_plus.logic.lexer import tokens
 
-_HOOK_GENERATOR_SIGNATURE: te.TypeAlias = Generator[
+if t.TYPE_CHECKING:
+    import typing_extensions as te
+
+_HOOK_GENERATOR_SIGNATURE: "te.TypeAlias" = Generator[
     t.Optional[tuple[tokens.BaseToken, bool, bool]], t.Union[str, t.Literal[None]], None
 ]
-_HOOK_SIGNATURE: te.TypeAlias = Callable[[], _HOOK_GENERATOR_SIGNATURE]
-_ON_NEXT_HOOK: te.TypeAlias = Generator[t.Optional[tokens.BaseToken], t.Union[str, t.Literal[None]], tuple[bool, bool]]
+_HOOK_SIGNATURE: "te.TypeAlias" = Callable[[], _HOOK_GENERATOR_SIGNATURE]
+_ON_NEXT_HOOK: "te.TypeAlias" = Generator[
+    t.Optional[tokens.BaseToken], t.Union[str, t.Literal[None]], tuple[bool, bool]
+]
 
 
 class BaseLexer(abc.ABC):

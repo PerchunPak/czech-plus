@@ -4,7 +4,8 @@ import typing
 from abc import ABC
 from dataclasses import dataclass
 
-import typing_extensions
+if typing.TYPE_CHECKING:
+    import typing_extensions
 
 
 class MultiValueEnum(enum.Enum):
@@ -93,4 +94,4 @@ class AdjectiveWord(BaseWord):
     completion_of_comparison_degrees: str
 
 
-AnyWord: typing_extensions.TypeAlias = typing.Union[NounWord, VerbWord, AdjectiveWord]
+AnyWord: "typing_extensions.TypeAlias" = typing.Union[NounWord, VerbWord, AdjectiveWord]
