@@ -36,9 +36,9 @@ Fields
     and female will give the same - ``ty``.
 
 
-***********
-What we do?
-***********
+**************
+What do we do?
+**************
 
 Based on :attr:`~NounCard.gender` field, we add pronoun to the
 :attr:`~NounCard.czech` field. See values inside

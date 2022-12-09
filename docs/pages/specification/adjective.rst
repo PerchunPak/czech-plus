@@ -35,9 +35,9 @@ Fields
     field, addon just will return ``hezký``.
 
 
-***********
-What we do?
-***********
+**************
+What do we do?
+**************
 
 We just add :attr:`~AdjectiveWord.completion_of_comparison_degrees` to the end.
 See example upper.

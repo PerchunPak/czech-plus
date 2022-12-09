@@ -50,9 +50,9 @@ Fields
     in the result.
 
 
-***********
-What we do?
-***********
+**************
+What do we do?
+**************
 
 Based on :attr:`~VerbCard.preposition_and_case` field, we add preposition
 (if it's was given) and case (which this verb gives). You can look at
