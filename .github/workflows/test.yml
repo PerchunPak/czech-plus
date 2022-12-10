@@ -64,7 +64,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        poetry env use "3.10"
+        poetry env use "3.9"
         poetry install --only main,make,github_hooks
 
     - name: Apply codestyle
