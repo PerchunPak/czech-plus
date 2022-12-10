@@ -1,7 +1,6 @@
 """Module for hooks, that will be called by Anki."""
 import typing as t
 
-from aqt import gui_hooks
 from czech_plus._vendor.loguru import logger
 
 from czech_plus.logic.processor import get_processor
@@ -29,4 +28,10 @@ def process_card_hook(html: str, card: "Card", _: str) -> str:
 
 def append_hooks() -> None:
     """Register our hooks."""
-    gui_hooks.card_will_show.append(process_card_hook)
+    try:
+        import aqt
+    except Exception:
+        logger.exception("Failed to import aqt, are we in CI?")
+        return
+
+    aqt.gui_hooks.card_will_show.append(process_card_hook)
