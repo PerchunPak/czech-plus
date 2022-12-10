@@ -1340,7 +1340,7 @@ test = ["black (>=22.3.0,<23.0.0)", "coverage (>=6.2,<7.0)", "isort (>=5.0.6,<6.
 name = "typing-extensions"
 version = "4.4.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -1471,7 +1471,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "444517e1b416c08604015d95b45f4a070e4b082b19fc153e04e673fe995adf1f"
+content-hash = "40b95da86e289dc975ec98a77fef287339d211bb9e0cb160c0ccb76e457cf3ef"
 
 [metadata.files]
 alabaster = [

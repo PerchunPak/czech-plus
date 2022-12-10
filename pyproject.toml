@@ -18,7 +18,6 @@ python = "~3.9"
 
 aqt = {extras = ["qt6"], version = "~2"}
 
-typing-extensions = "~4"
 # see `czech_plus._vendor`'s README
 vendoring = "~1.2"
 
