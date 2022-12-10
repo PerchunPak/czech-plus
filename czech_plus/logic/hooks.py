@@ -2,7 +2,6 @@
 import typing as t
 
 from aqt import gui_hooks
-from aqt.qt import debug
 from czech_plus._vendor.loguru import logger
 
 from czech_plus.logic.processor import get_processor
@@ -15,7 +14,6 @@ def process_card_hook(html: str, card: "Card", _: str) -> str:
     """Main hook, that will change the card's content."""
     logger.debug("Hook was called.")
 
-    debug()
     content = dict(card.note().items())
     note_type = t.cast(str, card.note_type()["name"])
     parser = get_processor(note_type)
