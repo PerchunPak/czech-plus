@@ -3,7 +3,6 @@
 [![Support Ukraine](https://badgen.net/badge/support/UKRAINE/?color=0057B8&labelColor=FFD700)](https://www.gov.uk/government/news/ukraine-what-you-can-do-to-help)
 
 [![Build Status](https://github.com/PerchunPak/czech-plus/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/PerchunPak/czech-plus/actions?query=workflow%3Atest)
-[![codecov](https://codecov.io/gh/PerchunPak/czech-plus/branch/master/graph/badge.svg)](https://codecov.io/gh/PerchunPak/czech-plus)
 [![Documentation Build Status](https://readthedocs.org/projects/czech-plus/badge/?version=latest)](https://czech-plus.readthedocs.io/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
