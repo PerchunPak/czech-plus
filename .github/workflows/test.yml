@@ -69,7 +69,7 @@ jobs:
 
     - name: Apply codestyle
       run: |
-        make style
+        poetry run make style
 
         poetry run python .github/commit_and_push.py \
           --token ${{ secrets.GITHUB_TOKEN }} \
