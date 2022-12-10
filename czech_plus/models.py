@@ -1,11 +1,6 @@
 """Module for our models."""
 import enum
 import typing
-from abc import ABC
-from dataclasses import dataclass
-
-if typing.TYPE_CHECKING:
-    import typing_extensions
 
 
 class MultiValueEnum(enum.Enum):
@@ -75,37 +70,3 @@ class Case(MultiValueEnum):
         Just an alias to :attr:`Case.value`\ [1].
         """
         return typing.cast(int, self.value[1])
-
-
-@dataclass(frozen=True)
-class BaseWord(ABC):
-    """Base class for words."""
-
-    czech: str
-    translation: str
-
-
-@dataclass(frozen=True)
-class NounWord(BaseWord):
-    """Class for representation of noun words."""
-
-    gender: Gender
-
-
-@dataclass(frozen=True)
-class VerbWord(BaseWord):
-    """Class for representation of verb words."""
-
-    preposition_and_case: list[tuple[typing.Optional[str], Case]]
-    future_form: bool
-
-
-@dataclass(frozen=True)
-class AdjectiveWord(BaseWord):
-    """Class for representation of adjective words."""
-
-    cocd: str
-    """Completion of Comparison Degrees."""
-
-
-AnyWord: "typing_extensions.TypeAlias" = typing.Union[NounWord, VerbWord, AdjectiveWord]
