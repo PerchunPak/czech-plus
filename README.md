@@ -14,6 +14,11 @@ My addon to learn Czech
 - Free! We don't want any money from you!
 - Add yours!
 
+## Warning
+
+This addon is not supposed to be used with invalid input, it expects always valid input and almost never validates it.
+You will see unexpected behaviour and confusing errors if you use it with invalid input.
+
 ## Installing
 
 Is not released yet.
