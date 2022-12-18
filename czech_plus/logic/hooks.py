@@ -29,4 +29,4 @@ def process_card_hook(html: str, card: "Card", _: str) -> str:
 
 def append_hooks() -> None:
     """Register our hooks."""
-    gui_hooks.card_will_show.append(process_card_hook)
+    gui_hooks.card_will_show.append(process_card_hook)  # type: ignore[attr-defined] # see https://github.com/ankitects/anki/issues/2276
