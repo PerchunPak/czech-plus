@@ -14,17 +14,17 @@ files = [
 
 [[package]]
 name = "anki"
-version = "2.1.54"
+version = "2.1.55"
 description = ""
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.9"
 files = [
-    {file = "anki-2.1.54-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:535303ea77090fa740a8f007adea09aad737528deab2ef0a82af43cca811fe9a"},
-    {file = "anki-2.1.54-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:343e3a56790c6dd0c24a4893e2019c8d6754819e26246373fb2f4427f2c5aa53"},
-    {file = "anki-2.1.54-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:bb81310f4524a6395f97aeec629d5c287404b8820c5747406e85251bba06dbac"},
-    {file = "anki-2.1.54-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:2aba3e7ed0942078cc56e1d7850be159f932f91702b87e45d0c360b06f65f29f"},
-    {file = "anki-2.1.54-cp39-abi3-win_amd64.whl", hash = "sha256:832e54a438f2f6df0e05f12b48e22c02f082fed72d2452ffa19bf412c0c9f4fb"},
+    {file = "anki-2.1.55-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:48e65b3fae645d9c9514d7707bbfc138bd506037bff1ba527c3deffb55928121"},
+    {file = "anki-2.1.55-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:c7f8345b749c4235a22776a939e413e8affaa3122df6173c2944a5aeca21e6b5"},
+    {file = "anki-2.1.55-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:9997f93aa1819a881ab905841a178d264ce4d47f75e3a1849113fc65de87fd5b"},
+    {file = "anki-2.1.55-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:e29e5de8f3a9b68a876c340ad605ce070bbfaf04d16c7af949e3cf81a741cf08"},
+    {file = "anki-2.1.55-cp39-abi3-win_amd64.whl", hash = "sha256:d8b09ca53f6e6072a7571154bda71fcee40b7ea2833f0c4df3bb4036d5321418"},
 ]
 
 [package.dependencies]
@@ -33,7 +33,7 @@ decorator = "*"
 distro = {version = "*", markers = "sys_platform != \"darwin\" and sys_platform != \"win32\""}
 markdown = "*"
 orjson = "*"
-protobuf = ">=3.17"
+protobuf = ">=4.21"
 psutil = {version = "*", markers = "sys_platform == \"win32\""}
 requests = {version = "*", extras = ["socks"]}
 
@@ -42,17 +42,17 @@ syncserver = ["flask", "waitress"]
 
 [[package]]
 name = "aqt"
-version = "2.1.54"
+version = "2.1.55"
 description = ""
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.9"
 files = [
-    {file = "aqt-2.1.54-py3-none-any.whl", hash = "sha256:ee05a39b19be0fc36c9eb2e394589d2efadd182033351600cec5daa442462f65"},
+    {file = "aqt-2.1.55-py3-none-any.whl", hash = "sha256:a029d770283137ed517a1a63b13b418e4a5c299eb3e297fd714712c26d6467ab"},
 ]
 
 [package.dependencies]
-anki = "2.1.54"
+anki = "2.1.55"
 beautifulsoup4 = "*"
 flask = "*"
 flask_cors = "*"
@@ -63,7 +63,7 @@ pyqt6-webengine = {version = ">=6.2", optional = true, markers = "extra == \"qt6
 pywin32 = {version = "*", markers = "sys_platform == \"win32\""}
 requests = "*"
 send2trash = "*"
-waitress = "*"
+waitress = ">=2.0.0"
 winrt = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
@@ -614,14 +614,14 @@ gitdb = ">=4.0.1,<5"
 
 [[package]]
 name = "identify"
-version = "2.5.9"
+version = "2.5.10"
 description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.9-py2.py3-none-any.whl", hash = "sha256:a390fb696e164dbddb047a0db26e57972ae52fbd037ae68797e5ae2f4492485d"},
-    {file = "identify-2.5.9.tar.gz", hash = "sha256:906036344ca769539610436e40a684e170c3648b552194980bb7b617a8daeb9f"},
+    {file = "identify-2.5.10-py2.py3-none-any.whl", hash = "sha256:fb7c2feaeca6976a3ffa31ec3236a6911fbc51aec9acc111de2aed99f244ade2"},
+    {file = "identify-2.5.10.tar.gz", hash = "sha256:dce9e31fee7dbc45fea36a9e855c316b8fbf807e65a862f160840bb5a2bf5dfd"},
 ]
 
 [package.extras]
@@ -1161,26 +1161,26 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "protobuf"
-version = "4.21.11"
+version = "4.21.12"
 description = ""
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "protobuf-4.21.11-cp310-abi3-win32.whl", hash = "sha256:25266bf373ee06d5d66f9eb1ec9d434b243dccce5c32faf151054cfa6f9dcbf1"},
-    {file = "protobuf-4.21.11-cp310-abi3-win_amd64.whl", hash = "sha256:260e346927fd4e6fbb49ab545137b19610c24a1d853dc5f29ddf777ab1987211"},
-    {file = "protobuf-4.21.11-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:4d01ef83517c181d60ea1c6d0b2f644be250ade740d6554a2f5a021b1ad622e3"},
-    {file = "protobuf-4.21.11-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:a5a14b907a191319e7a58b38c583bbf50deb21e002f723a912c5e4f6969a778e"},
-    {file = "protobuf-4.21.11-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:553e35c0878f6855e55f01a14561e6bce6df79b6636a5acf83b9d9ac7eab7922"},
-    {file = "protobuf-4.21.11-cp37-cp37m-win32.whl", hash = "sha256:4b75c947289a2e9c1f37d21c593f1ef6fb4fed33977dfb2ac84f799eb29a8ff4"},
-    {file = "protobuf-4.21.11-cp37-cp37m-win_amd64.whl", hash = "sha256:efb16b16fd3eef25357f84d516062753014b76279ce4e0ec4880badd2fba7370"},
-    {file = "protobuf-4.21.11-cp38-cp38-win32.whl", hash = "sha256:d91a47c77b33580024b0271b65bb820c4e0264c25eb49151ad01e691de8fa0b6"},
-    {file = "protobuf-4.21.11-cp38-cp38-win_amd64.whl", hash = "sha256:bab4b21a986ded225b9392c07ce21c35d790951f51e1ebfd32e4d443b05c3726"},
-    {file = "protobuf-4.21.11-cp39-cp39-win32.whl", hash = "sha256:c3b9e329b4c247dc3ba5c50f60915a84e08278eb6d9e3fa674d0d04ff816bfd7"},
-    {file = "protobuf-4.21.11-cp39-cp39-win_amd64.whl", hash = "sha256:85ccb4753ee21de7dc81a7a68a051f25dbe133ffa01a639ac998427d0b223387"},
-    {file = "protobuf-4.21.11-py2.py3-none-any.whl", hash = "sha256:4922e3320ed70e81f05060822da36923d09fd9e04e17f411f2d8d8d0070f9f5c"},
-    {file = "protobuf-4.21.11-py3-none-any.whl", hash = "sha256:a944dc9550baae276afc7dc8193191d4c2ad660270a1e5ed5a71539817ebe2e2"},
-    {file = "protobuf-4.21.11.tar.gz", hash = "sha256:2c6a4d13732d9b094db31b3841986c38b17ac61a3fe05ee26a779d94c4c3fb43"},
+    {file = "protobuf-4.21.12-cp310-abi3-win32.whl", hash = "sha256:b135410244ebe777db80298297a97fbb4c862c881b4403b71bac9d4107d61fd1"},
+    {file = "protobuf-4.21.12-cp310-abi3-win_amd64.whl", hash = "sha256:89f9149e4a0169cddfc44c74f230d7743002e3aa0b9472d8c28f0388102fc4c2"},
+    {file = "protobuf-4.21.12-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:299ea899484ee6f44604deb71f424234f654606b983cb496ea2a53e3c63ab791"},
+    {file = "protobuf-4.21.12-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:d1736130bce8cf131ac7957fa26880ca19227d4ad68b4888b3be0dea1f95df97"},
+    {file = "protobuf-4.21.12-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:78a28c9fa223998472886c77042e9b9afb6fe4242bd2a2a5aced88e3f4422aa7"},
+    {file = "protobuf-4.21.12-cp37-cp37m-win32.whl", hash = "sha256:3d164928ff0727d97022957c2b849250ca0e64777ee31efd7d6de2e07c494717"},
+    {file = "protobuf-4.21.12-cp37-cp37m-win_amd64.whl", hash = "sha256:f45460f9ee70a0ec1b6694c6e4e348ad2019275680bd68a1d9314b8c7e01e574"},
+    {file = "protobuf-4.21.12-cp38-cp38-win32.whl", hash = "sha256:6ab80df09e3208f742c98443b6166bcb70d65f52cfeb67357d52032ea1ae9bec"},
+    {file = "protobuf-4.21.12-cp38-cp38-win_amd64.whl", hash = "sha256:1f22ac0ca65bb70a876060d96d914dae09ac98d114294f77584b0d2644fa9c30"},
+    {file = "protobuf-4.21.12-cp39-cp39-win32.whl", hash = "sha256:27f4d15021da6d2b706ddc3860fac0a5ddaba34ab679dc182b60a8bb4e1121cc"},
+    {file = "protobuf-4.21.12-cp39-cp39-win_amd64.whl", hash = "sha256:237216c3326d46808a9f7c26fd1bd4b20015fb6867dc5d263a493ef9a539293b"},
+    {file = "protobuf-4.21.12-py2.py3-none-any.whl", hash = "sha256:a53fd3f03e578553623272dc46ac2f189de23862e68565e83dde203d41b76fc5"},
+    {file = "protobuf-4.21.12-py3-none-any.whl", hash = "sha256:b98d0148f84e3a3c569e19f52103ca1feacdac0d2df8d6533cf983d1fda28462"},
+    {file = "protobuf-4.21.12.tar.gz", hash = "sha256:7cd532c4566d0e6feafecc1059d04c7915aec8e182d1cf7adee8b24ef1e2e6ab"},
 ]
 
 [[package]]
@@ -1546,14 +1546,14 @@ six = ">=1.5"
 
 [[package]]
 name = "pytz"
-version = "2022.6"
+version = "2022.7"
 description = "World timezone definitions, modern and historical"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pytz-2022.6-py2.py3-none-any.whl", hash = "sha256:222439474e9c98fced559f1709d89e6c9cbf8d79c794ff3eb9f8800064291427"},
-    {file = "pytz-2022.6.tar.gz", hash = "sha256:e89512406b793ca39f5971bc999cc538ce125c0e51c27941bef4568b460095e2"},
+    {file = "pytz-2022.7-py2.py3-none-any.whl", hash = "sha256:93007def75ae22f7cd991c84e02d434876818661f8df9ad5df9e950ff4e52cfd"},
+    {file = "pytz-2022.7.tar.gz", hash = "sha256:7ccfae7b4b2c067464a6733c6261673fdb8fd1be905460396b97a073e9fa683a"},
 ]
 
 [[package]]
