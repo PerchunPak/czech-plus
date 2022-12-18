@@ -35,6 +35,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq libgl1
+
         poetry env use "${{ matrix.python-version }}"
         poetry install --without docs --with github_hooks
         poetry run vendoring sync
