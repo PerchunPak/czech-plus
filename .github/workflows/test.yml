@@ -21,17 +21,30 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install poetry
+      id: poetry
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        # Adding `poetry` to `$PATH`:
         echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        echo "version=$(poetry --version)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Poetry cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry
+        key: poetry-cache-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.poetry.outputs.version }}
+
+    - name: Cache Packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.local
+        key: dependencies-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
 
     - name: Install dependencies
       run: |
@@ -39,7 +52,7 @@ jobs:
         sudo apt-get install -y libegl1-mesa
 
         poetry env use "${{ matrix.python-version }}"
-        poetry install --without docs --with github_hooks
+        poetry install --without docs --with github_hooks --sync
         poetry run vendoring sync
 
     - name: Run checks
@@ -56,19 +69,31 @@ jobs:
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        # Adding `poetry` to `$PATH`:
         echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        echo "version=$(poetry --version)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Poetry cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry
+        key: poetry-cache-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.poetry.outputs.version }}
+
+    - name: Cache Packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.local
+        key: dependencies-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-        cache: 'poetry'
 
     - name: Install dependencies
       run: |
         poetry env use "3.9"
-        poetry install --only main,make,github_hooks
+        poetry install --only main,make,github_hooks --sync
 
     - name: Apply codestyle
       run: |
