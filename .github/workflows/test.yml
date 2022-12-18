@@ -41,6 +41,12 @@ jobs:
         path: ~/.local
         key: dependencies-${{ job.name }}-${{ runner.os }}-${{ matrix.python-version }}
 
+    - name: Install and Cache APT packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libegl1-mesa
+        version: 1.0
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -48,9 +54,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get update -qq
-        sudo apt-get install -y libegl1-mesa
-
         poetry env use "${{ matrix.python-version }}"
         poetry install --without docs --with github_hooks --sync
         poetry run vendoring sync
