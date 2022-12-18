@@ -39,7 +39,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: dependencies-${{ job.name }}-${{ runner.os }}-${{ matrix.python-version }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -87,7 +87,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: dependencies-${{ job.name }}-${{ runner.os }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
