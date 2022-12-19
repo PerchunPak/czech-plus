@@ -27,7 +27,9 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}
+        key: poetry-${{ runner.os }}-${{ hashFiles("poetry.lock") }}
+        restore-keys: |
+          poetry-${{ runner.os }}-
 
     - name: Install/Update Poetry
       run: |
@@ -44,7 +46,9 @@ jobs:
           ${{ github.workspace }}/czech_plus/_vendor
           ${{ github.workspace }}/.mypy_cache
           ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ matrix.python-version }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles("poetry.lock", "czech_plus/_vendor/requirements.txt", ".mypy_cache/**/*", ".pytest_cache/**/*") }}
+        restore-keys: |
+          dependencies-${{ github.job }}-${{ runner.os }}-
 
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -80,7 +84,9 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}
+        key: poetry-${{ runner.os }}-${{ hashFiles("poetry.lock") }}
+        restore-keys: |
+          poetry-${{ runner.os }}-
 
     - name: Install/Update Poetry
       run: |
@@ -97,7 +103,9 @@ jobs:
           ${{ github.workspace }}/czech_plus/_vendor
           ${{ github.workspace }}/.mypy_cache
           ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles("poetry.lock", "czech_plus/_vendor/requirements.txt", ".mypy_cache/**/*", ".pytest_cache/**/*") }}
+        restore-keys: |
+          dependencies-${{ github.job }}-${{ runner.os }}-
 
     - name: Set up Python
       uses: actions/setup-python@v4
