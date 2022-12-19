@@ -36,10 +36,14 @@ jobs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         poetry config virtualenvs.in-project true
 
-    - name: Cache Packages
+    - name: Cache Packages and Dependencies cache
       uses: actions/cache@v3
       with:
-        path: ${{ env.GITHUB_WORKSPACE }}/.venv
+        path: |
+          ${{ env.GITHUB_WORKSPACE }}/.venv
+          ${{ env.GITHUB_WORKSPACE }}/czech_plus/_vendor
+          ${{ env.GITHUB_WORKSPACE }}/.mypy_cache
+          ${{ env.GITHUB_WORKSPACE }}/.pytest_cache
         key: dependencies-${{ github.job }}-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Install and Cache APT packages
@@ -85,10 +89,14 @@ jobs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         poetry config virtualenvs.in-project true
 
-    - name: Cache Packages
+    - name: Cache Packages and Dependencies cache
       uses: actions/cache@v3
       with:
-        path: ${{ env.GITHUB_WORKSPACE }}/.venv
+        path: |
+          ${{ env.GITHUB_WORKSPACE }}/.venv
+          ${{ env.GITHUB_WORKSPACE }}/czech_plus/_vendor
+          ${{ env.GITHUB_WORKSPACE }}/.mypy_cache
+          ${{ env.GITHUB_WORKSPACE }}/.pytest_cache
         key: dependencies-${{ github.job }}-${{ runner.os }}
 
     - name: Set up Python
