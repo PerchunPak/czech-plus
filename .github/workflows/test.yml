@@ -40,10 +40,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          ${{ env.GITHUB_WORKSPACE }}/.venv
-          ${{ env.GITHUB_WORKSPACE }}/czech_plus/_vendor
-          ${{ env.GITHUB_WORKSPACE }}/.mypy_cache
-          ${{ env.GITHUB_WORKSPACE }}/.pytest_cache
+          ${{ github.workspace }}/.venv
+          ${{ github.workspace }}/czech_plus/_vendor
+          ${{ github.workspace }}/.mypy_cache
+          ${{ github.workspace }}/.pytest_cache
         key: dependencies-${{ github.job }}-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Install and Cache APT packages
@@ -93,10 +93,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          ${{ env.GITHUB_WORKSPACE }}/.venv
-          ${{ env.GITHUB_WORKSPACE }}/czech_plus/_vendor
-          ${{ env.GITHUB_WORKSPACE }}/.mypy_cache
-          ${{ env.GITHUB_WORKSPACE }}/.pytest_cache
+          ${{ github.workspace }}/.venv
+          ${{ github.workspace }}/czech_plus/_vendor
+          ${{ github.workspace }}/.mypy_cache
+          ${{ github.workspace }}/.pytest_cache
         key: dependencies-${{ github.job }}-${{ runner.os }}
 
     - name: Set up Python
