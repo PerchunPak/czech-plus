@@ -20,19 +20,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install poetry
-      id: poetry
+    - name: Cache Poetry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.config/pypoetry
+          ~/.local/share/pypoetry
+          ~/.cache/pypoetry
+        key: poetry-${{ runner.os }}
+
+    - name: Install/Update Poetry
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-        echo "version=$(poetry --version)" >> $GITHUB_OUTPUT
-      shell: bash
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        poetry config virtualenvs.in-project true
 
     - name: Cache Packages
       uses: actions/cache@v3
       with:
-        path: ~/.local
+        path: ${{ env.GITHUB_WORKSPACE }}/.venv
         key: dependencies-${{ github.job }}-${{ runner.os }}-${{ matrix.python-version }}
 
     - name: Install and Cache APT packages
@@ -62,19 +69,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install poetry
-      id: poetry
+    - name: Cache Poetry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.config/pypoetry
+          ~/.local/share/pypoetry
+          ~/.cache/pypoetry
+        key: poetry-${{ runner.os }}
+
+    - name: Install/Update Poetry
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-        echo "version=$(poetry --version)" >> $GITHUB_OUTPUT
-      shell: bash
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        poetry config virtualenvs.in-project true
 
     - name: Cache Packages
       uses: actions/cache@v3
       with:
-        path: ~/.local
+        path: ${{ env.GITHUB_WORKSPACE }}/.venv
         key: dependencies-${{ github.job }}-${{ runner.os }}
 
     - name: Set up Python
