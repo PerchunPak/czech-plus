@@ -33,7 +33,7 @@ jobs:
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/share/pypoetry/venv/bin" >> $GITHUB_PATH
         poetry config virtualenvs.in-project true
 
     - name: Cache Packages and Dependencies cache
@@ -86,7 +86,7 @@ jobs:
       run: |
         curl -sSL "https://install.python-poetry.org" | python
 
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/share/pypoetry/venv/bin" >> $GITHUB_PATH
         poetry config virtualenvs.in-project true
 
     - name: Cache Packages and Dependencies cache
