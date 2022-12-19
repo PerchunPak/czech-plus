@@ -27,7 +27,7 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ hashFiles("poetry.lock") }}
+        key: poetry-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
           poetry-${{ runner.os }}-
 
@@ -46,7 +46,7 @@ jobs:
           ${{ github.workspace }}/czech_plus/_vendor
           ${{ github.workspace }}/.mypy_cache
           ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles("poetry.lock", "czech_plus/_vendor/requirements.txt", ".mypy_cache/**/*", ".pytest_cache/**/*") }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles('poetry.lock', 'czech_plus/_vendor/requirements.txt', '.mypy_cache/**/*', '.pytest_cache/**/*') }}
         restore-keys: |
           dependencies-${{ github.job }}-${{ runner.os }}-
 
@@ -84,7 +84,7 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ hashFiles("poetry.lock") }}
+        key: poetry-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
           poetry-${{ runner.os }}-
 
@@ -103,7 +103,7 @@ jobs:
           ${{ github.workspace }}/czech_plus/_vendor
           ${{ github.workspace }}/.mypy_cache
           ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles("poetry.lock", "czech_plus/_vendor/requirements.txt", ".mypy_cache/**/*", ".pytest_cache/**/*") }}
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles('poetry.lock', 'czech_plus/_vendor/requirements.txt', '.mypy_cache/**/*', '.pytest_cache/**/*') }}
         restore-keys: |
           dependencies-${{ github.job }}-${{ runner.os }}-
 
