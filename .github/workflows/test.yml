@@ -27,7 +27,7 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+        key: poetry-${{ runner.os }}-${{ github.event.repository.updated_at}}
         restore-keys: |
           poetry-${{ runner.os }}-
 
@@ -84,7 +84,7 @@ jobs:
           ~/.config/pypoetry
           ~/.local/share/pypoetry
           ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+        key: poetry-${{ runner.os }}-${{ github.event.repository.updated_at}}
         restore-keys: |
           poetry-${{ runner.os }}-
 
