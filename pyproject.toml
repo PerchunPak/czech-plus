@@ -67,6 +67,16 @@ requests = "~2.28"
 GitPython = "~3.1"
 
 
+[tool.poetry.group.types.dependencies]
+types-markdown = "*"
+types-decorator = "*"
+types-mock = "*"
+types-protobuf = "*"
+types-requests = "*"
+types-setuptools = "*"
+types-waitress = "*"
+
+
 [tool.vendoring]
 destination = "czech_plus/_vendor/"
 requirements = "czech_plus/_vendor/requirements.txt"

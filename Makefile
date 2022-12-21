@@ -11,7 +11,7 @@ format:
 
 .PHONY: lint
 lint:
-	mypy --install-types --non-interactive .
+	mypy .
 	flake8 .
 	doc8 -q docs
 
