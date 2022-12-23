@@ -5,7 +5,7 @@ import typing as t
 import pytest
 import typing_extensions as te
 from faker import Faker
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 from czech_plus import models
 from czech_plus.logic.lexer import tokens
@@ -137,7 +137,7 @@ class TestNounProcessor(BaseTestProcessor):
 
     @pytest.fixture(autouse=True)
     def _mock_processor(
-        self, processor: NounProcessor, czech_field_name: str, gender_field_name: str, mocker: MockFixture
+        self, processor: NounProcessor, czech_field_name: str, gender_field_name: str, mocker: MockerFixture
     ) -> None:
         """Mock processor's fields."""
         mocker.patch.object(processor, "_NounProcessor__czech_field_name", czech_field_name)
@@ -243,7 +243,7 @@ class TestVerbProcessor(BaseTestProcessor):
 
     @pytest.fixture(autouse=True)
     def _mock_processor(
-        self, processor: VerbProcessor, czech_field_name: str, pac_field_name: str, mocker: MockFixture
+        self, processor: VerbProcessor, czech_field_name: str, pac_field_name: str, mocker: MockerFixture
     ) -> None:
         """Mock processor's fields."""
         mocker.patch.object(processor, "_VerbProcessor__czech_field_name", czech_field_name)
@@ -630,7 +630,7 @@ class TestAdjectiveProcessor(BaseTestProcessor):
 
     @pytest.fixture(autouse=True)
     def _mock_processor(
-        self, processor: AdjectiveProcessor, czech_field_name: str, cocd_field_name: str, mocker: MockFixture
+        self, processor: AdjectiveProcessor, czech_field_name: str, cocd_field_name: str, mocker: MockerFixture
     ) -> None:
         """Mocks processor's fields."""
         mocker.patch.object(processor, "_AdjectiveProcessor__czech_field_name", czech_field_name)
