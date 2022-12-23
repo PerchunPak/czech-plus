@@ -46,3 +46,9 @@ def mock_config() -> t.Iterator[t.Callable[[str, _T], _T]]:
         for temp_key in parsed_key[:-1]:
             content = getattr(content, temp_key)
         object.__setattr__(content, parsed_key[-1], value)
+
+
+@pytest.fixture(scope="session")
+def config() -> Config:
+    """Fixture for config."""
+    return Config()
