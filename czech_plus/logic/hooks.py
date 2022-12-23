@@ -1,32 +1,19 @@
 """Module for hooks, that will be called by Anki."""
-import typing as t
 
-from aqt import gui_hooks
+import aqt
 from czech_plus._vendor.loguru import logger
 
-from czech_plus.logic.processor import get_processor
+from czech_plus.logic.compiler import Compiler
 
-if t.TYPE_CHECKING:
-    from anki.cards import Card  # circular import
-
-
-def process_card_hook(html: str, card: "Card", _: str) -> str:
-    """Main hook, that will change the card's content."""
-    logger.debug("Hook was called.")
-
-    content = dict(card.note().items())
-    note_type = t.cast(str, card.note_type()["name"])
-    parser = get_processor(note_type)
-
-    if parser is None:
-        logger.debug("No parser for this note type.")
-        return html
-
-    parsed = parser.process(content)
-    logger.debug(f"Parsed: {parsed!r}")
-    return html
+# TODO: A method how to add custom buttons to the deck browser,
+#       maybe I will use it for `compile` button.
+# def add_custom_button(_: "deckbrowser.DeckBrowser", content: "deckbrowser.DeckBrowserContent") -> None:
+#     content.stats += "<div>Hello World!</div>"
+# aqt.gui_hooks.deck_browser_will_render_content.append(add_custom_button)
 
 
 def append_hooks() -> None:
     """Register our hooks."""
-    gui_hooks.card_will_show.append(process_card_hook)  # type: ignore[attr-defined] # see https://github.com/ankitects/anki/issues/2276
+    aqt.gui_hooks.main_window_did_init.append(  # type: ignore[attr-defined] # see https://github.com/ankitects/anki/issues/2276
+        logger.catch(Compiler(lambda: aqt.mw.col.weakref()).compile_all_notes)  # type: ignore[union-attr]
+    )

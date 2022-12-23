@@ -9,7 +9,7 @@ from pytest_mock import MockerFixture
 
 from czech_plus import models
 from czech_plus.logic.lexer import tokens
-from czech_plus.logic.processor import get_processor
+from czech_plus.logic.processor import get_processor, process_card
 from czech_plus.logic.processor.implementations.adjective import (
     AdjectiveProcessor,
 )
@@ -39,6 +39,20 @@ def test_get_processor(  # type: ignore[misc]
 def test_get_processor_not_found(faker: Faker) -> None:
     """Test for :func:`czech_plus.logic.processor.get_processor` with invalid note type name."""
     assert get_processor(faker.word()) is None
+
+
+def test_process_card(mocker: MockerFixture, faker: Faker) -> None:
+    """Tests :func:`czech_plus.logic.processor.process_card`."""
+    mock_processor = mocker.patch("czech_plus.logic.processor.get_processor")
+    mock_processor.return_value.process.return_value = (value := faker.word())
+    assert process_card({faker.word(): faker.word()}, faker.word()) == value
+
+
+def test_process_card_but_processor_not_found(mocker: MockerFixture, faker: Faker) -> None:
+    """Tests :func:`czech_plus.logic.processor.process_card` when processor wasn't found."""
+    mock_processor = mocker.patch("czech_plus.logic.processor.get_processor")
+    mock_processor.return_value.process.return_value = None
+    assert process_card({faker.word(): faker.word()}, faker.word()) is None
 
 
 class BaseTestProcessor(abc.ABC):

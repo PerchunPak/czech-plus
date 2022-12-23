@@ -46,6 +46,8 @@ class BaseCardFields:
     """Name of the field, where czech word is."""
     translation: str = "Translation"
     """Name of the field, where translation is."""
+    processed: str = "Processed"
+    """Name of the field, where already processed card is."""
 
 
 @dataclasses.dataclass(frozen=True)

@@ -11,7 +11,7 @@ from czech_plus.logic.processor.implementations import (
     verb,
 )
 
-__all__ = ["get_processor"]
+__all__ = ["get_processor", "process_card"]
 
 
 def get_processor(note_type: str) -> t.Optional[base.BaseProcessor]:
@@ -35,3 +35,26 @@ def get_processor(note_type: str) -> t.Optional[base.BaseProcessor]:
         return None
 
     return parsers_table[note_type]()
+
+
+def process_card(content: dict[str, str], note_type: str) -> t.Optional[str]:
+    """Process the card.
+
+    Args:
+        content: Content of the card.
+        note_type: Name of the note type.
+
+    Returns:
+        Processed content of the card or None, if processor wasn't found.
+    """
+    logger.debug(f"Processing card with {note_type=}...")
+    logger.trace(str(content))
+
+    processor = get_processor(note_type)
+    if processor is None:
+        logger.debug("No processor for this note type.")
+        return None
+
+    processed = processor.process(content)
+    logger.debug(f"Processed: {processed=}")
+    return processed
