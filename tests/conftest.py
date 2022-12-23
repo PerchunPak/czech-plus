@@ -5,36 +5,44 @@ import pytest
 
 from czech_plus.config import Config
 
+_T = t.TypeVar("_T")
+
 
 @pytest.fixture
-def mock_config() -> t.Iterator[t.Callable[[str, t.Any], None]]:  # type: ignore[misc]
+def mock_config() -> t.Iterator[t.Callable[[str, _T], _T]]:
     """Fixture for mocking config.
 
     Returns:
         A function that mocks the config.
     """
     config = Config()
-    content = config
-    original = default = object()
-    parsed_key: t.Optional[list[str]] = None
+    processed: dict[str, t.Any] = {}  # type: ignore[misc]
 
-    def _mock_config(key: str, value: t.Any) -> None:  # type: ignore[misc]
+    def _mock_config(key: str, value: _T) -> _T:
         """Mock config.
 
         Args:
             key: Key to mock.
             value: Value to set.
-        """
-        nonlocal original, parsed_key, content
 
+        Returns:
+            The value that was set.
+        """
+        content = config
         parsed_key = key.split(".")
         for temp_key in parsed_key[:-1]:
             content = getattr(content, temp_key)
 
-        original = getattr(content, parsed_key[-1])
+        processed[key] = getattr(content, parsed_key[-1])
         object.__setattr__(content, parsed_key[-1], value)
+        return value
 
     yield _mock_config
 
-    assert original is not default and parsed_key is not None
-    object.__setattr__(content, parsed_key[-1], original)
+    for key, value in processed.items():
+        parsed_key = key.split(".")
+        content = config
+
+        for temp_key in parsed_key[:-1]:
+            content = getattr(content, temp_key)
+        object.__setattr__(content, parsed_key[-1], value)
