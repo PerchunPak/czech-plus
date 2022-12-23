@@ -80,7 +80,7 @@ class VerbProcessor(BaseProcessor):
                         )
                     elif isinstance(prepositions_and_cases_item, tokens.AdditionalSeparatorToken):
                         processed_prepositions_and_cases += ", "
-                    else:  # pragma: no cover
+                    else:  # pragma: no cover  # TODO what about ``tokens.SeparatorToken``? like ``[1, 2. 3]``
                         raise NotImplementedError("We don't support other scenarios here.")
 
                 result += f"[{token_or_string} ({processed_prepositions_and_cases})], "
