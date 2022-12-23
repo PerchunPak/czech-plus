@@ -29,6 +29,9 @@ class NounProcessor(BaseProcessor):
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__gender_field_name} (Gender field): {content[self.__gender_field_name]}"
         )
+        if not content[self.__gender_field_name]:
+            logger.warning(f"Gender field is empty, skipping. Czech field: {content[self.__czech_field_name]}")
+            return content[self.__czech_field_name]
 
         lexer = NounLexer()
         lexed_czech = self._navigate_over(lexer.lex(content[self.__czech_field_name]))

@@ -28,6 +28,9 @@ class AdjectiveProcessor(BaseProcessor):
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__cocd_field_name} (CoCD field): {content[self.__cocd_field_name]}"
         )
+        if not content[self.__cocd_field_name]:
+            logger.warning(f"CoCD field is empty, skipping. Czech field: {content[self.__czech_field_name]}")
+            return content[self.__czech_field_name]
 
         lexer = AdjectiveLexer()
         lexed_czech = self._navigate_over(lexer.lex(content[self.__czech_field_name]))

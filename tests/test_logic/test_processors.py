@@ -53,6 +53,10 @@ class BaseTestProcessor(abc.ABC):
     def processor(self, faker: Faker) -> BaseProcessor:
         """Fixture for initialised processor."""
 
+    @abc.abstractmethod
+    def second_field_name(self) -> str:
+        """Fixture for second field name (like gender)."""
+
     def test_navigate_over(self, processor: BaseProcessor, faker: Faker) -> None:
         r"""Basic test for :meth:`~czech_plus.logic.processor.BaseProcessor._navigate_over`\ ."""
         word = faker.word()
@@ -116,6 +120,13 @@ class BaseTestProcessor(abc.ABC):
         assert result == [word, token]
         assert result[1] is token
 
+    def test_return_czech_field_if_second_field_is_empty(
+        self, czech_field_name: str, second_field_name: str, processor: BaseProcessor
+    ) -> None:
+        """Tests that :meth:`~czech_plus.logic.processor.BaseProcessor.process` \
+        returns czech field, if second field is empty."""
+        assert processor.process({czech_field_name: (czech := object()), second_field_name: ""}) == czech  # type: ignore[dict-item] # object as a value
+
 
 class TestNounProcessor(BaseTestProcessor):
     """Tests for :class:`~czech_plus.logic.processor.implementations.noun.NounProcessor`."""
@@ -129,6 +140,11 @@ class TestNounProcessor(BaseTestProcessor):
     def gender_field_name(self, faker: Faker) -> str:
         """Fixture for gender field name."""
         return t.cast(str, faker.word())
+
+    @pytest.fixture
+    def second_field_name(self, gender_field_name: str) -> str:  # type: ignore[override]
+        """Proxy to ``gender_field_name``."""
+        return gender_field_name
 
     @pytest.fixture
     def processor(self, faker: Faker) -> NounProcessor:
@@ -235,6 +251,11 @@ class TestVerbProcessor(BaseTestProcessor):
     def pac_field_name(self, faker: Faker) -> str:
         """Fixture for prepositions and cases field name."""
         return t.cast(str, faker.word())
+
+    @pytest.fixture
+    def second_field_name(self, pac_field_name: str) -> str:  # type: ignore[override]
+        """Proxy to ``pac_field_name``."""
+        return pac_field_name
 
     @pytest.fixture
     def processor(self, faker: Faker) -> VerbProcessor:
@@ -622,6 +643,11 @@ class TestAdjectiveProcessor(BaseTestProcessor):
     def cocd_field_name(self, faker: Faker) -> str:
         """Fixture for cocd field name."""
         return t.cast(str, faker.word())
+
+    @pytest.fixture
+    def second_field_name(self, cocd_field_name: str) -> str:  # type: ignore[override]
+        """Proxy to ``cocd_field_name``."""
+        return cocd_field_name
 
     @pytest.fixture
     def processor(self, faker: Faker) -> AdjectiveProcessor:

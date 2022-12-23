@@ -33,6 +33,9 @@ class VerbProcessor(BaseProcessor):
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__pac_field_name} (Prepositions and Cases field): {content[self.__pac_field_name]}"
         )
+        if not content[self.__pac_field_name]:
+            logger.warning(f"PaC field is empty, skipping. Czech field: {content[self.__czech_field_name]}")
+            return content[self.__czech_field_name]
 
         lexer = VerbLexer()
         lexed_czech = self._navigate_over(lexer.lex(content[self.__czech_field_name]))
