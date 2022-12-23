@@ -25,7 +25,6 @@ def setup_logging() -> None:
     logger.add(
         sys.stdout,
         level=config.logging.level,
-        filter="czech_plus",
         colorize=True,
         serialize=config.logging.json,
         backtrace=True,
