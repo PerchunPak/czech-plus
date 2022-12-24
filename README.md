@@ -67,5 +67,3 @@ Use Anki's addon manager.
 ## Thanks
 
 This project was generated with [python-template](https://github.com/PerchunPak/python-template).
-Current template version: [5afea199e68f5100ddd394dfb765071b27b31373](https://github.com/PerchunPak/python-template/tree/5afea199e68f5100ddd394dfb765071b27b31373).
-See what [updated](https://github.com/PerchunPak/python-template/compare/5afea199e68f5100ddd394dfb765071b27b31373...master).
