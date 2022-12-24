@@ -6,6 +6,7 @@ Some will be used in other places.
 import sys
 import typing
 
+import aqt
 from czech_plus._vendor.loguru import logger
 
 from czech_plus import config as config_module
@@ -31,6 +32,13 @@ def setup_logging() -> None:
         **kwargs,
     )
     logger.debug("Logging was setup!")
+
+
+def compile_all_notes() -> None:
+    """Just runs :meth:`czech_plus.logic.compiler.Compiler.compile_all_notes`."""
+    from czech_plus.logic.compiler import Compiler  # circular import
+
+    logger.catch(Compiler(lambda: aqt.mw.col.weakref()).compile_all_notes)()  # type: ignore[union-attr]
 
 
 class Singleton(type):

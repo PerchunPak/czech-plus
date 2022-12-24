@@ -3,15 +3,11 @@
 from czech_plus._vendor.loguru import logger
 
 from czech_plus import config, utils
-from czech_plus.logic.hooks import append_hooks
 
 __all__ = ["main"]
 
 
 def main() -> None:
-    """Main function to run entire app."""
+    """Main function to initialize and run entire addon."""
     utils.setup_logging()
-    append_hooks()
-
-
-main()
+    utils.compile_all_notes()
