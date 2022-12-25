@@ -1,6 +1,5 @@
 """Tests for the :mod:`czech_plus.config` module."""
 import dataclasses
-import json
 import pathlib
 import typing as t
 
@@ -27,7 +26,8 @@ class TestConfig:
         def _remove_cached_config() -> None:
             config.Config._instances.pop(config.Config)
 
-        _remove_cached_config()
+        if config.Config in config.Config._instances:
+            _remove_cached_config()
         return _remove_cached_config
 
     def test_config_writes_default_config_if_it_does_not_exist(
@@ -46,22 +46,28 @@ class TestConfig:
 
         assert cfg == default_cfg
 
-    def test_config_correctly_read_from_file(
-        self, remove_cached_config: t.Callable[[], None], tmp_path: pathlib.Path, mocker: MockerFixture, faker: Faker
+    def test_config_correctly_read_from_anki(
+        self, remove_cached_config: t.Callable[[], None], mocker: MockerFixture, faker: Faker
     ) -> None:
-        """Test that the config is correctly read from a file."""
-        config_path = tmp_path / "config.json"
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-
+        """Test that the config is correctly read from Anki API."""
         custom_cfg = factories.ConfigFactory()
         config_as_dict = dataclasses.asdict(custom_cfg)
-        t.cast(dict[str, str], config_as_dict["logging"])["level"] = t.cast(
-            dict[str, config.LogLevel], config_as_dict["logging"]
-        )["level"].name
-        config_path.write_text(json.dumps(config_as_dict, indent=4, ensure_ascii=False), encoding="utf8")
+        config_as_dict["logging"]["level"] = config_as_dict["logging"]["level"].name
+        mocker.patch("czech_plus.config._get_anki_config", return_value=config_as_dict)
         remove_cached_config()
 
-        mocker.patch("czech_plus.config._CONFIG_PATH", config_path)
         cfg = config.Config()
 
         assert cfg == custom_cfg
+
+    def test_get_anki_config_returns_empty_dict_if_aqt_mw_is_none(self, mocker: MockerFixture) -> None:
+        """Test that the :func:`czech_plus.config._get_anki_config` returns empty dict if ``aqt.mw`` is ``None``."""
+        mocker.patch("aqt.mw", None)
+        assert config._get_anki_config() == {}
+
+    def test_get_anki_config_returns_config_from_anki(self, mocker: MockerFixture, faker: Faker) -> None:
+        """Test that the :func:`czech_plus.config._get_anki_config` returns config from Anki."""
+        mocker.patch("aqt.mw")
+        mocked = mocker.patch("aqt.mw.addonManager.getConfig", return_value=(config_as_dict := faker.pydict()))
+        assert config._get_anki_config() == config_as_dict
+        mocked.assert_called_once_with(config.BASE_DIR.stem)

@@ -5,14 +5,23 @@ import typing as t
 from enum import IntEnum
 from pathlib import Path
 
+import aqt
+
 from czech_plus.utils import Singleton
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent.parent
 _CONFIG_PATH = BASE_DIR / "config.json"
 _CONFIG_AS_DICT: "te.TypeAlias" = "dict[str, t.Union[str, _CONFIG_AS_DICT]]"
+
+
+def _get_anki_config() -> _CONFIG_AS_DICT:
+    """Get the config from Anki."""
+    if aqt.mw is None:
+        return {}
+    return t.cast(_CONFIG_AS_DICT, aqt.mw.addonManager.getConfig(BASE_DIR.stem))
 
 
 class LogLevel(IntEnum):
@@ -134,20 +143,18 @@ class Config(metaclass=Singleton):
         config: _CONFIG_AS_DICT
         if not _CONFIG_PATH.exists():
             config = t.cast(_CONFIG_AS_DICT, dataclasses.asdict(self))
-            t.cast(dict[str, str], config["logging"])["level"] = t.cast(dict[str, LogLevel], config["logging"])[
-                "level"
-            ].name
+            config["logging"]["level"] = config["logging"]["level"].name  # type: ignore[index,union-attr]
 
             with _CONFIG_PATH.open("w", encoding="utf8") as config_file:
                 config_file.write(json.dumps(config, indent=4, ensure_ascii=False))
         else:
-            with _CONFIG_PATH.open("r", encoding="utf8") as config_file:
-                config = t.cast(_CONFIG_AS_DICT, json.load(config_file))
+            config = _get_anki_config()
 
         self._set_values(self, config)
 
         # special handling for enums
-        object.__setattr__(self.logging, "level", LogLevel[t.cast(str, self.logging.level)])
+        if isinstance(self.logging.level, str):  # type: ignore[unreachable]
+            object.__setattr__(self.logging, "level", LogLevel[self.logging.level])  # type: ignore[unreachable]
 
     def _set_values(self, object_to_set: t.Any, config: _CONFIG_AS_DICT, /) -> None:  # type: ignore[misc] # Explicit "Any" is not allowed
         """Set values from dict config to object.
