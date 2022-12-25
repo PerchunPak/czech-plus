@@ -1,11 +1,14 @@
 """Module for config management."""
 import dataclasses
 import json
+import threading
+import time
 import typing as t
 from enum import IntEnum
 from pathlib import Path
 
 import aqt
+from czech_plus._vendor.loguru import logger
 
 from czech_plus.utils import Singleton
 
@@ -14,6 +17,7 @@ if t.TYPE_CHECKING:
 
 BASE_DIR = Path(__file__).parent.parent
 _CONFIG_PATH = BASE_DIR / "config.json"
+_ADDON_META_PATH = BASE_DIR / "meta.json"
 _CONFIG_AS_DICT: "te.TypeAlias" = "dict[str, t.Union[str, _CONFIG_AS_DICT]]"
 
 
@@ -137,6 +141,7 @@ class Config(metaclass=Singleton):
     def __post_init__(self) -> None:
         """Post init hook."""
         self._setup()
+        self._start_watching_for_changes()
 
     def _setup(self) -> None:
         """Perform setup of the config."""
@@ -171,3 +176,30 @@ class Config(metaclass=Singleton):
                 self._set_values(getattr(object_to_set, key), value)
                 continue
             object.__setattr__(object_to_set, key, value)
+
+    @classmethod
+    def _start_watching_for_changes(cls) -> None:
+        """Start watching for changes in config.
+
+        This ensures that we will never start two config watchers in one time.
+        """
+        if not hasattr(cls, "_watcher"):
+            logger.trace("Watcher wasn't started yet, starting it now.")
+            cls._watcher: threading.Thread = threading.Thread(target=lambda: cls._watch_for_changes(cls()), daemon=True)  # type: ignore[misc,attr-defined]
+            cls._watcher.start()  # type: ignore[attr-defined]
+        else:
+            logger.trace("Watcher was started before.")
+
+    def _watch_for_changes(self) -> None:
+        """Watch for changes in config file and update ``self`` based on changes."""
+        logger.debug("Start watching for changes in config file.")
+        stamp = _ADDON_META_PATH.stat().st_mtime
+
+        while True:
+            new_stamp = _ADDON_META_PATH.stat().st_mtime
+            if new_stamp != stamp:
+                logger.info("Config file changed. Reloading it.")
+                stamp = new_stamp
+                self._setup()
+
+            time.sleep(1)
