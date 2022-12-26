@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/PerchunPak/python-template",
-  "commit": "1642c609d567e38d282508952a7b4f72654f4da5",
+  "commit": "17d3eb1ee8e3dfb52228ba63ae2880cfa560ad4f",
   "context": {
     "cookiecutter": {
       "project_name": "czech-plus",
