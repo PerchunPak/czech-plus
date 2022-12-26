@@ -143,21 +143,22 @@ class Config(metaclass=Singleton):
 
     def _setup(self) -> None:
         """Perform setup of the config."""
-        config: _CONFIG_AS_DICT
-        if not _CONFIG_PATH.exists():
-            config = t.cast(_CONFIG_AS_DICT, dataclasses.asdict(self))
-            config["logging"]["level"] = config["logging"]["level"].name  # type: ignore[index,union-attr]
-
-            with _CONFIG_PATH.open("w", encoding="utf8") as config_file:
-                config_file.write(json.dumps(config, indent=4, ensure_ascii=False))
-        else:
-            config = _get_anki_config()
+        self._write_config()
+        config = _get_anki_config()
 
         self._set_values(self, config)
 
         # special handling for enums
         if isinstance(self.logging.level, str):  # type: ignore[unreachable]
             object.__setattr__(self.logging, "level", LogLevel[self.logging.level])  # type: ignore[unreachable]
+
+    def _write_config(self) -> None:
+        """Write config to the file."""
+        config = t.cast(_CONFIG_AS_DICT, dataclasses.asdict(self))
+        config["logging"]["level"] = config["logging"]["level"].name  # type: ignore[index,union-attr]
+
+        with _CONFIG_PATH.open("w", encoding="utf8") as config_file:
+            config_file.write(json.dumps(config, indent=4, ensure_ascii=False))
 
     def _set_values(self, object_to_set: t.Any, config: _CONFIG_AS_DICT, /) -> None:  # type: ignore[misc] # Explicit "Any" is not allowed
         """Set values from dict config to object.
