@@ -26,7 +26,6 @@ class BaseCardFieldsFactory(factory.Factory):
         model = config.BaseCardFields
 
     czech: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
-    translation: str = factory.fuzzy.FuzzyAttribute(faker.pystr)
 
 
 class NounCardFieldsFactory(BaseCardFieldsFactory):
