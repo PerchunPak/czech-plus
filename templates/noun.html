@@ -1,0 +1,66 @@
+<!--
+This is an example! You can use this template to add colors.
+If you use multiple genders, it will create kind of gradient.
+
+Do not forget to change ``{{Processed}}`` and ``{{Gender}}`` to your fields names.
+
+
+
+Note: If you want to use ``{{type:Processed}}`` you should use
+```
+{{Translation}}
+{{type:Processed}}
+
+<script>
+  document.body.style.background = ""
+</script>
+```
+For front side and
+```
+{{FrontSide}}
+
+<hr id=answer>
+(code below)
+```
+For back side.
+
+P.S. Remove '```' before pasting and replace `(code below)` with code below this comment.
+-->
+{{Processed}}
+
+<script>
+  var genders = "{{Gender}}".split(", ")
+  var colors = []
+
+  for (const gender of genders) {
+    if (gender === "M") {
+      colors.push("LightSkyBlue")
+    } else if (gender === "F") {
+      colors.push("Pink")
+    } else if (gender === "N") {
+      colors.push("LightGreen")
+    } else if (gender.startsWith("m")) {
+      if (gender.endsWith("M")) {
+        colors.push("Aqua")
+      } else if (gender.endsWith("F")) {
+        colors.push("HotPink")
+      } else if (gender.endsWith("N")) {
+        colors.push("Green")
+      }
+    }
+  }
+
+  if (colors.length === 0) {
+    document.body.style.background = ""
+    throw new Error("no color")
+  }
+
+  var result = "linear-gradient(to right, "
+  for (const [index, color] of colors.entries()) {
+    let previous = (100 / colors.length) * (index)
+    let current = (100 / colors.length) * (index + 1)
+    result += color + " " + previous + "%, " + color + " " + current + "%, "
+  }
+  document.body.style.background = result.slice(0, -2) + ")"
+
+</script>

@@ -1,0 +1,102 @@
+<!--
+This is an example! You can use this template to add colors.
+If you use multiple prepositions and cases, it will create kind of gradient.
+
+Do not forget to change ``{{Processed}}`` and ``{{Gender}}`` to your fields names.
+
+
+
+Note: If you want to use ``{{type:Processed}}`` you should use
+```
+{{Translation}}
+{{type:Processed}}
+
+<script>
+  document.body.style.background = ""
+</script>
+```
+For front side and
+```
+{{FrontSide}}
+
+<hr id=answer>
+(code below)
+```
+For back side.
+
+P.S. Remove '```' before pasting and replace `(code below)` with code below this comment.
+-->
+{{Processed}}
+
+<script>
+  var prepositions_and_cases_in_all_words = "{{Prepositions and Cases}}".split(". ").map(
+    function(value) {
+      return value.split(", ").map(
+        function(value) {
+          if (value.startsWith("!")) {
+            return value.substring(1)
+          }
+
+          const preposition_and_case = value.split(" ")
+          if (preposition_and_case.length === 1) {
+            return preposition_and_case[0]
+          } else {
+            return preposition_and_case[1]
+          }
+        }
+      )
+    }
+  )
+
+  var colors = []
+  for (const prepositions_and_cases of prepositions_and_cases_in_all_words) {
+    colors.push("|")
+    for (const word_case of prepositions_and_cases) {
+      if (word_case === "1") {
+        colors.push("GoldenRod")
+      } else if (word_case === "2") {
+        colors.push("IndianRed")
+      } else if (word_case === "3") {
+        colors.push("Indigo")
+      } else if (word_case === "4") {
+        colors.push("Maroon")
+      } else if (word_case === "5") {
+        colors.push("MidnightBlue")
+      } else if (word_case === "6") {
+        colors.push("RebeccaPurple")
+      } else if (word_case === "7") {
+        colors.push("SteelBlue")
+      }
+    }
+  }
+
+  if (colors.length === 0) {
+    document.body.style.background = ""
+    throw new Error("no color")
+  }
+
+  var result = "linear-gradient(to right, "
+  var next_word = false
+  var index = 0
+  var colors_length = colors.filter(function(value) {if (value !== "|") return true}).length
+  for (const color of colors) {
+    if (color === "|") {
+      next_word = true
+      continue
+    }
+    let previous
+    let current
+    if (next_word === true) {
+      next_word = false
+      previous = (100 / colors_length) * (index)
+      if (previous !== 0) {previous++}
+      current = (100 / colors_length) * (index + 1)
+    } else {
+      previous = (100 / colors_length) * (index)
+      current = (100 / colors_length) * (index + 1)
+    }
+    result += color + " " + previous + "%, " + color + " " + current + "%, "
+    index++
+  }
+  document.body.style.background = result.slice(0, -2) + ")"
+</script>
