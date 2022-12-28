@@ -39,7 +39,10 @@ class Compiler:
         logger.debug("Compile notes was called.")
 
         for note_id, note_type in self._get_notes_ids():
-            self.compile_note(note_id, note_type)
+            try:
+                self.compile_note(note_id, note_type)
+            except Exception:
+                logger.exception(f"Failed to compile note {note_id} ({note_type})")
 
     def compile_note(self, note_id: int, note_type: str) -> None:
         """Compile a note.
