@@ -17,10 +17,6 @@ __all__ = ["setup_logging", "Singleton"]
 def setup_logging() -> None:
     """Setup logging for the addon."""
     config = config_module.Config()
-    kwargs: dict[str, typing.Any] = {}  # type: ignore[misc] # Explicit "Any" is not allowed
-
-    if config.logging.level <= config_module.LogLevel.DEBUG:
-        kwargs["diagnose"] = True
 
     logger.remove()
     if config.logging.level < config_module.LogLevel.WARNING:
@@ -31,7 +27,7 @@ def setup_logging() -> None:
             colorize=True,
             serialize=config.logging.json,
             backtrace=True,
-            **kwargs,
+            diagnose=True,
         )
     logger.add(
         sys.stderr,
@@ -40,7 +36,7 @@ def setup_logging() -> None:
         colorize=True,
         serialize=config.logging.json,
         backtrace=True,
-        **kwargs,
+        diagnose=True,
     )
     logger.debug("Logging was setup!")
 
