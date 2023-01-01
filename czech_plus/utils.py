@@ -23,9 +23,20 @@ def setup_logging() -> None:
         kwargs["diagnose"] = True
 
     logger.remove()
+    if config.logging.level < config_module.LogLevel.WARNING:
+        logger.add(
+            sys.stdout,
+            level=config.logging.level,
+            filter=lambda record: record["level"].no < config_module.LogLevel.WARNING,
+            colorize=True,
+            serialize=config.logging.json,
+            backtrace=True,
+            **kwargs,
+        )
     logger.add(
-        sys.stdout,
+        sys.stderr,
         level=config.logging.level,
+        filter=lambda record: record["level"].no >= config_module.LogLevel.WARNING,
         colorize=True,
         serialize=config.logging.json,
         backtrace=True,
