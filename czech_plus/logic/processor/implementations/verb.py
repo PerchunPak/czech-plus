@@ -28,109 +28,159 @@ class VerbProcessor(BaseProcessor):
         Returns:
             The processed ``czech`` field, ready to be inserted into the card.
         """
-        logger.trace(
-            f"Parsing verb card\n"
+        logger.debug(
+            "Processing verb card\n"
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__pac_field_name} (Prepositions and Cases field): {content[self.__pac_field_name]}"
         )
+
+        pre_processed = self._pre_process(content)
         if not content[self.__pac_field_name]:
             logger.warning(f"PaC field is empty, skipping. Czech field: {content[self.__czech_field_name]}")
             return content[self.__czech_field_name]
+        return self._process(pre_processed)
+
+    def _pre_process(
+        self, content: dict[str, str]
+    ) -> t.Iterator[
+        tuple[
+            t.Union[str, tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd], list[t.Union[tokens.BaseToken, str]]
+        ]
+    ]:
+        logger.debug(
+            "Pre-processing verb card\n"
+            f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
+            f"{self.__pac_field_name} (Prepositions and Cases field): {content[self.__pac_field_name]}"
+        )
 
         lexer = VerbLexer()
         lexed_czech = self._navigate_over(lexer.lex(content[self.__czech_field_name]))
         lexed_prepositions_and_cases = self._navigate_over(
             lexer.lex(content[self.__pac_field_name]), dont_skip_escaped=True
         )
-        get_token_or_string = self._get_token_or_string(lexed_czech)  # type: ignore[type-var]
 
-        skip = False
-        result = ""
-        processed_prepositions_and_cases = ""
-        for prepositions_and_cases in lexed_prepositions_and_cases:
-            logger.trace(f"{prepositions_and_cases=}")
-
-            if skip:
-                skip = False
+        future_form_was = False
+        for czech in lexed_czech:
+            logger.debug(f"Pre-processing czech {czech!r}.")
+            if isinstance(czech, tokens.AdditionalSeparatorToken):
+                logger.debug("Skipping additional separator token.")
                 continue
-
-            if isinstance(prepositions_and_cases, tokens.SeparatorToken):
-                token_or_string = get_token_or_string()
-                assert isinstance(token_or_string, str)
-                result += f"{token_or_string} ({processed_prepositions_and_cases}), "
-                processed_prepositions_and_cases = ""
-            elif isinstance(prepositions_and_cases, tokens.AdditionalSeparatorToken):
-                processed_prepositions_and_cases += ", "
-
-            elif isinstance(prepositions_and_cases, tokens.FutureFormToken):
-                token_or_string = get_token_or_string()
-                assert isinstance(token_or_string, str)
-                result += f"{token_or_string} ({processed_prepositions_and_cases}) "
-                processed_prepositions_and_cases = ""
-
-                token_or_string_generator = get_token_or_string()
-                assert isinstance(token_or_string_generator, tokens.FutureFormToken)
-                token_or_string = next(token_or_string_generator.content)
-                assert isinstance(token_or_string, str)
-
-                for prepositions_and_cases_item in prepositions_and_cases.content:
-                    if isinstance(prepositions_and_cases_item, str):
-                        processed_prepositions_and_cases += self._process_prepositions_and_cases(
-                            prepositions_and_cases_item
-                        )
-                    elif isinstance(prepositions_and_cases_item, tokens.AdditionalSeparatorToken):
-                        processed_prepositions_and_cases += ", "
-                    else:  # pragma: no cover  # TODO what about ``tokens.SeparatorToken``? like ``[1, 2. 3]``
-                        raise NotImplementedError("We don't support other scenarios here.")
-
-                result += f"[{token_or_string} ({processed_prepositions_and_cases})], "
-                processed_prepositions_and_cases = ""
-                skip = True
-
-            elif isinstance(prepositions_and_cases, tokens.SkipToken):
-                token_or_string = get_token_or_string()
-                assert isinstance(token_or_string, str)
-                result += token_or_string + ", "
-                skip = True
-
-            elif isinstance(prepositions_and_cases, (str, tokens.EscapedToken)):
-                processed_prepositions_and_cases += self._process_prepositions_and_cases(prepositions_and_cases)
+            elif isinstance(czech, str):
+                prepositions_and_cases = list(self._pre_process_czech_token(czech, lexed_prepositions_and_cases))
+                logger.debug(f"Pre-processed prepositions and cases here: {prepositions_and_cases!r}.")
+                if len(prepositions_and_cases) > 0 and isinstance(
+                    prepositions_and_cases[-1], (tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd)
+                ):
+                    logger.debug("Future form was found.")
+                    future_form_was = True
+                    prepositions_and_cases.pop()
+                yield czech, prepositions_and_cases
+            elif isinstance(czech, (tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd)):
+                logger.debug("Processing future form.")
+                if not future_form_was and isinstance(czech, tokens.FutureFormTokenStart):
+                    assert list(self._pre_process_czech_token(czech, lexed_prepositions_and_cases)) == [czech]
+                future_form_was = False
+                yield czech, [czech]
             else:  # pragma: no cover
-                raise NotImplementedError("We don't support other scenarios here.")
+                raise NotImplementedError(f"Unexpected czech token type: {czech} ({type(czech)})")
 
-        if processed_prepositions_and_cases != "":
-            token_or_string = get_token_or_string()
-            assert isinstance(token_or_string, str)
-            result += f"{token_or_string} ({processed_prepositions_and_cases})"
+    def _pre_process_czech_token(
+        self,
+        czech: t.Union[tokens.BaseToken, str],
+        lexed_prepositions_and_cases: t.Iterator[t.Union[tokens.BaseToken, str]],
+    ) -> t.Iterator[t.Union[tokens.BaseToken, str]]:
+        logger.debug(f"Pre-processing czech token {czech!r}.")
+        if isinstance(czech, tokens.FutureFormTokenStart):
+            assert next(lexed_prepositions_and_cases) == tokens.FutureFormTokenStart()
+            yield tokens.FutureFormTokenStart()
+        elif isinstance(czech, str):
+            for i, preposition_and_case in enumerate(lexed_prepositions_and_cases):
+                logger.debug(f"Pre-processing preposition and case {preposition_and_case!r} in czech token {czech!r}.")
+                if isinstance(preposition_and_case, tokens.SeparatorToken):
+                    logger.debug(f"Skipping separator token (index={i}).")
+                    assert i != 0
+                    break
 
-        return result.rstrip(", ")
+                yield preposition_and_case
 
-    def _get_token_or_string(self, lexed_czech: t.Iterator[_T], /) -> t.Callable[[], _T]:
-        r"""Get token or string from the lexed Czech field.
+                if isinstance(preposition_and_case, tokens.FutureFormTokenStart):
+                    logger.trace("'tokens.FutureFormTokenStart' was found.")
+                    break
+        else:  # pragma: no cover
+            raise NotImplementedError(f"Unexpected czech token type: {czech} ({type(czech)})")
 
-        Args:
-            lexed_czech: Iterator over lexed Czech field.
+    def _process(
+        self,
+        pre_processed: t.Iterator[
+            tuple[
+                t.Union[str, tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd],
+                list[t.Union[tokens.BaseToken, str]],
+            ]
+        ],
+    ) -> str:
+        result: str = ""
+        for czech, prepositions_and_cases in pre_processed:
+            logger.debug(f"Processing {czech=} {prepositions_and_cases=} in pre-processed.")
 
-        Returns:
-            Function that logs the token, and asserts that it's not :class:`~czech_plus.logic.lexer.tokens.SeparatorToken`
-            and if it's an :class:`~czech_plus.logic.lexer.tokens.AdditionalSeparatorToken`\ , the function will return
-            next element.
-        """
+            skip = False
+            processed_prepositions_and_cases = ""
+            for i, preposition_and_case in enumerate(prepositions_and_cases):
+                logger.debug(
+                    f"Processing {preposition_and_case=} (index={i}) in prepositions and cases. "
+                    f"Already processed: {processed_prepositions_and_cases!r}"
+                )
+                if skip:
+                    logger.debug(f"Skipping {preposition_and_case=} (index={i}), skip was True.")
+                    skip = False
+                    continue
 
-        def get_token_or_string() -> _T:
-            token_or_string = next(lexed_czech)
-            logger.trace(f"{token_or_string=}")
-            assert not isinstance(token_or_string, tokens.SeparatorToken)
+                if isinstance(preposition_and_case, tokens.SkipToken):
+                    logger.debug("Found skip token.")
+                    if i == len(prepositions_and_cases) - 1 and processed_prepositions_and_cases.endswith(", "):
+                        logger.trace("Removing trailing comma on the end.")
+                        processed_prepositions_and_cases = processed_prepositions_and_cases[:-2]
+                        break
+                    skip = True
+                    continue
 
-            if isinstance(token_or_string, tokens.AdditionalSeparatorToken):
-                return get_token_or_string()  # type: ignore[unreachable] # has coverage in tests
+                processed_prepositions_and_cases += (
+                    added_part := self._process_preposition_and_case(preposition_and_case)
+                )
+                logger.trace(f"Added {added_part!r} to processed prepositions and cases.")
 
-            return token_or_string
+            if isinstance(czech, (tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd)):
+                logger.debug(f"'czech' is future form. ({czech=} {processed_prepositions_and_cases=})")
+                to_add = ((" " if result else "") + "[") if isinstance(czech, tokens.FutureFormTokenStart) else "]"
+                logger.trace(f"Adding {to_add!r} to the result.")
+                result += to_add
+            else:
+                logger.trace(f"'czech' is not a future form. ({czech=} {processed_prepositions_and_cases=})")
+                result += ", " if result and not result.endswith("[") else ""
+                result += czech
+                if processed_prepositions_and_cases != "":
+                    result += " (" + processed_prepositions_and_cases + ")"
+        logger.debug(f"Processed result: {result!r}.")
+        return result
 
-        return get_token_or_string
+    def _process_preposition_and_case(self, preposition_and_case: t.Union[tokens.BaseToken, str], /) -> str:
+        logger.trace(f"Processing preposition and case: {preposition_and_case!r}.")
+        if isinstance(preposition_and_case, tokens.AdditionalSeparatorToken):
+            return ", "
+        elif isinstance(preposition_and_case, tokens.EscapedToken):
+            return preposition_and_case.content
+        elif isinstance(preposition_and_case, str):
+            return self._process_raw_preposition_and_case(preposition_and_case)
+        elif isinstance(preposition_and_case, tokens.FutureFormTokenStart):
+            return "["
+        elif isinstance(preposition_and_case, tokens.FutureFormTokenEnd):
+            return "]"
+        else:  # pragma: no cover
+            raise NotImplementedError(
+                f"Unexpected preposition and case token type: {preposition_and_case} ({type(preposition_and_case)})"
+            )
 
-    def _process_prepositions_and_cases(self, preposition_and_case: t.Union[str, tokens.BaseToken], /) -> str:
-        """Process prepositions and cases.
+    def _process_raw_preposition_and_case(self, preposition_and_case: str, /) -> str:
+        """Process raw preposition and case, when they're numbers for example.
 
         Args:
             preposition_and_case: Preposition and case to process.
@@ -140,21 +190,17 @@ class VerbProcessor(BaseProcessor):
         """
         logger.trace(f"Processing preposition and case: {preposition_and_case!r}")
 
-        if isinstance(preposition_and_case, str):
-            split = preposition_and_case.split(" ")
-            if len(split) == 1:
-                return models.Case(int(split[0])).questions  # type: ignore[no-untyped-call]
-            elif split[1] == "":
-                # Preposition before escaped case
-                #
-                # prep !case
-                # ^^^^^
-                # notice that last symbol is a space, but it has deleted by split
-                return preposition_and_case
+        split = preposition_and_case.split(" ")
+        if len(split) == 1:
+            return models.Case(int(split[0])).questions  # type: ignore[no-untyped-call]
+        elif split[1] == "":
+            # Preposition before escaped case
+            #
+            # prep !case
+            # ^^^^^
+            # notice that last symbol is a space, but it was deleted by split
+            logger.trace("Found preposition before escaped case.")
+            return preposition_and_case
 
-            preposition, case = split
-            return f"{preposition} {models.Case(int(case)).questions}"  # type: ignore[no-untyped-call]
-        elif isinstance(preposition_and_case, tokens.EscapedToken):
-            return preposition_and_case.content
-        else:  # pragma: no cover
-            raise NotImplementedError("We don't support other scenarios here.")
+        preposition, case = split
+        return f"{preposition} {models.Case(int(case)).questions}"  # type: ignore[no-untyped-call]

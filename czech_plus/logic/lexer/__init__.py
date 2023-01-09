@@ -28,6 +28,8 @@ class BaseLexer(abc.ABC):
     WORD_ESCAPE_SYMBOL = "!"
     SKIP_SYMBOL = "_"
 
+    _ESCAPE_WORD_STOP_SYMBOLS = {SEPARATE_SYMBOL, ESCAPE_SYMBOL, None}
+
     def lex(self, string: str) -> Iterator[t.Union[tokens.BaseToken, str]]:
         r"""Lex ``string`` argument.
 
@@ -65,13 +67,6 @@ class BaseLexer(abc.ABC):
 
                             if temp_string != "":
                                 logger.debug(f"temp_string != '' ({temp_string=})")
-                                if isinstance(token, tokens.FutureFormToken):
-                                    logger.trace(f"isinstance(token, tokens.FutureFormToken) is True")
-                                    temp_string = temp_string[:-1]
-                                    if temp_string == "":
-                                        logger.trace("After stripping temp string, it's empty.")
-                                        yield token
-                                        continue
 
                                 yield temp_string
                                 temp_string = ""
@@ -108,6 +103,13 @@ class BaseLexer(abc.ABC):
 
                         if temp_string != "":
                             logger.trace("temp_string != ''")
+                            if isinstance(token, tokens.FutureFormTokenStart):
+                                logger.trace(f"isinstance(token, tokens.FutureFormTokenStart) is True")
+                                temp_string = temp_string[:-1]
+                                if temp_string == "":
+                                    logger.trace("After stripping temp string, it's empty.")
+                                    yield token
+                                    continue
                             yield temp_string
                             temp_string = ""
                         yield token
@@ -198,7 +200,7 @@ class BaseLexer(abc.ABC):
         while True:
             symbol = yield  # type: ignore[misc] # Yield value expected
             logger.trace(f"Received {symbol=}")
-            if symbol in (self.SEPARATE_SYMBOL, self.ADDITIONAL_SEPARATE_SYMBOL, None):
+            if symbol in self._ESCAPE_WORD_STOP_SYMBOLS:
                 logger.trace("Received symbol is separate symbol or None.")
                 break
             escaped_part += t.cast(str, symbol)
@@ -260,27 +262,35 @@ class VerbLexer(BaseLexer):
     ADDITIONAL_SEPARATE_SYMBOL = ","
     FUTURE_FORM_START_SYMBOL, FUTURE_FORM_END_SYMBOL = "[", "]"
 
-    def _future_form(self) -> _HOOK_GENERATOR_SIGNATURE:
+    _ESCAPE_WORD_STOP_SYMBOLS = {
+        SEPARATE_SYMBOL,
+        ADDITIONAL_SEPARATE_SYMBOL,
+        None,
+        FUTURE_FORM_START_SYMBOL,
+        FUTURE_FORM_END_SYMBOL,
+    }
+
+    def _future_form_start(self) -> _HOOK_GENERATOR_SIGNATURE:
         """Find future form.
 
         See :meth:`~.BaseLexer._handle_hook` for signature description.
         """
-        logger.debug("Finding word future form...")
-        word = ""
-        while True:
-            symbol = yield  # type: ignore[misc] # Yield value expected
-            logger.trace(f"Received {symbol=}")
-            if symbol == self.FUTURE_FORM_END_SYMBOL or symbol is None:
-                logger.trace(r"Received symbol is future form end symbol or None.")
-                break
-            word += symbol
+        logger.debug("Found future form start...")
+        yield tokens.FutureFormTokenStart(), False, False
 
-        yield tokens.FutureFormToken(self.lex(word)), False, False
+    def _future_form_end(self) -> _HOOK_GENERATOR_SIGNATURE:
+        """Find future form.
+
+        See :meth:`~.BaseLexer._handle_hook` for signature description.
+        """
+        logger.debug("Found future form end...")
+        yield tokens.FutureFormTokenEnd(), False, False
 
     @property
     def _hooks(self) -> dict[str, _HOOK_SIGNATURE]:
         hooks = super()._hooks
-        hooks[self.FUTURE_FORM_START_SYMBOL] = self._future_form
+        hooks[self.FUTURE_FORM_START_SYMBOL] = self._future_form_start
+        hooks[self.FUTURE_FORM_END_SYMBOL] = self._future_form_end
         return hooks
 
 

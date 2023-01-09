@@ -561,11 +561,30 @@ class TestVerbProcessor(BaseTestProcessor):
 
         assert processor.process({czech_field_name: czech_input, pac_field_name: pac_input}) == result
 
+    def test_only_one_word_and_it_is_a_future_form(
+        self,
+        processor: VerbProcessor,
+        czech_field_name: str,
+        pac_field_name: str,
+        faker: Faker,
+    ) -> None:
+        """Tests processing future form when it's only one word, and it's future form."""
+        word = faker.word()
+        preposition = faker.word()
+        case: models.Case = faker.enum(models.Case)
+
+        assert (
+            processor.process({czech_field_name: f"[{word}]", pac_field_name: f"[{preposition} {case.number}]"})
+            == f"[{word} ({preposition} {case.questions})]"
+        )
+
     @pytest.mark.parametrize("words_count", ["2", "faker.pyint(3, 5)"])
+    @pytest.mark.parametrize("future_words_count", [1, 2])
     @pytest.mark.parametrize("position", ["1", "len(words) - 1"])
     def test_multiple_pacs_for_one_word_in_future_form(
         self,
         words_count: str,
+        future_words_count: int,
         position: str,
         processor: VerbProcessor,
         czech_field_name: str,
@@ -578,6 +597,11 @@ class TestVerbProcessor(BaseTestProcessor):
         for word in words:
             words_to_pacs[word] = [(faker.word(), faker.enum(models.Case)) for _ in range(faker.pyint(1, 5))]
         eval_position = eval(position, {"words": words})
+        future_words_indexes = [eval_position]
+        i = 0
+        while len(future_words_indexes) != future_words_count:
+            future_words_indexes.append(eval_position + i)
+            i += 1
 
         czech_input = ""
         pac_input = ""
@@ -585,16 +609,24 @@ class TestVerbProcessor(BaseTestProcessor):
 
         for i in range(len(words)):
             if i == eval_position:
-                czech_input += f" [{words[i]}]"
+                czech_input += " ["
                 pac_input += " ["
-                result += f" [{words[i]} ("
+                result += f" ["
+                for i2 in future_words_indexes:
+                    czech_input += f"{words[i2]}, "
+                    result += f"{words[i2]} ("
 
-                for preposition, case in words_to_pacs[words[i]]:
-                    pac_input += f"{preposition} {case.number}, "
-                    result += f"{preposition} {case.questions}, "
+                    for preposition, case in words_to_pacs[words[i2]]:
+                        pac_input += f"{preposition} {case.number}, "
+                        result += f"{preposition} {case.questions}, "
 
-                pac_input = pac_input.rstrip(", ") + "]"
-                result = result.rstrip(", ") + ")]"
+                    pac_input = pac_input.rstrip(", ") + ". "
+                    result = result.rstrip(", ") + "), "
+                pac_input = pac_input.rstrip(". ") + "]"
+                result = result.rstrip(", ") + "]"
+                czech_input = czech_input.rstrip(", ") + "]"
+                continue
+            if i in future_words_indexes:
                 continue
 
             czech_input += f", {words[i]}"
@@ -612,37 +644,128 @@ class TestVerbProcessor(BaseTestProcessor):
 
         assert processor.process({czech_field_name: czech_input, pac_field_name: pac_input}) == result
 
-    def test_navigate_over_with_future_form(self, processor: BaseProcessor, faker: Faker) -> None:
-        """Tests navigate over with future form."""
-        word = faker.word()
+    @pytest.mark.parametrize("words_count", ["1", "faker.pyint(2, 5)"])
+    def test_multiple_pacs_for_one_word_in_future_form_and_there_is_only_future_form(
+        self,
+        words_count: str,
+        processor: VerbProcessor,
+        czech_field_name: str,
+        pac_field_name: str,
+        faker: Faker,
+    ) -> None:
+        """Tests processing with one word in the future form and multiple pacs for it."""
+        words = [faker.word() for _ in range(eval(words_count, {"faker": faker}))]
 
-        def another_stub() -> _GENERATOR:
-            yield word
+        czech_input = "["
+        pac_input = "["
+        result = "["
 
-        def stub() -> _GENERATOR:
-            yield tokens.FutureFormToken(another_stub())
+        for word in words:
+            czech_input += f"{word}, "
+            result += f"{word} ("
 
-        result = list(processor._navigate_over(stub()))
-        assert len(result) == 1
-        assert isinstance(result[0], tokens.FutureFormToken)
-        assert list(result[0].content) == [word]
+            for _ in range(faker.pyint(1, 5)):
+                preposition, case = faker.word(), faker.enum(models.Case)
+                pac_input += f"{preposition} {case.number}, "
+                result += f"{preposition} {case.questions}, "
 
-    def test_navigate_over_with_future_form_and_first_word(self, processor: BaseProcessor, faker: Faker) -> None:
-        """Tests navigate over with future form and word yielded before."""
-        word1, word2 = faker.word(), faker.word()
+            pac_input = pac_input.removesuffix(", ") + ". "
+            result = result.removesuffix(", ") + "), "
+        pac_input = pac_input.removesuffix(". ") + "]"
+        result = result.removesuffix(", ") + "]"
+        czech_input = czech_input.removesuffix(", ") + "]"
 
-        def another_stub() -> _GENERATOR:
-            yield word2
+        assert processor.process({czech_field_name: czech_input, pac_field_name: pac_input}) == result
 
-        def stub() -> _GENERATOR:
-            yield word1
-            yield tokens.FutureFormToken(another_stub())
+    @pytest.mark.parametrize("words_count", ["2", "faker.pyint(3, 5)"])
+    @pytest.mark.parametrize("future_words_count", [1, 2])
+    @pytest.mark.parametrize("future_position", ["1", "len(words) - 1"])
+    @pytest.mark.parametrize("skipped_position", [1, 2, 3])
+    def test_skipped_in_future_form(
+        self,
+        words_count: str,
+        future_words_count: int,
+        future_position: str,
+        skipped_position: int,
+        processor: VerbProcessor,
+        czech_field_name: str,
+        pac_field_name: str,
+        faker: Faker,
+    ) -> None:
+        """Tests processing with multiple pacs for one word in future form."""
+        words = [faker.word() for _ in range(eval(words_count, {"faker": faker}))]
+        words_to_pacs: dict[str, list[tuple[t.Optional[str], t.Optional[models.Case]]]] = {}
+        for word in words:
+            words_to_pacs[word] = []
+            length = faker.pyint(1 if skipped_position != 2 else 3, 5)
+            real_skip_position = faker.pyint(1, length - 2) if length > 2 else -1
+            do_not_skip = False
+            for i in range(length):
+                if (i == 0 and skipped_position == 1) or (i == length - 1 and skipped_position == 3):
+                    words_to_pacs[word].append((None, None))
+                elif length > 2 and i == real_skip_position and skipped_position == 2 and not do_not_skip:
+                    do_not_skip = True
+                    words_to_pacs[word].append((None, None))
+                else:
+                    words_to_pacs[word].append((faker.word(), faker.enum(models.Case)))
+            if skipped_position == 2 and not do_not_skip:
+                raise RuntimeError("No skipped position in the middle.")
 
-        result = list(processor._navigate_over(stub()))
-        assert len(result) == 2
-        assert result[0] == word1
-        assert isinstance(result[1], tokens.FutureFormToken)
-        assert list(result[1].content) == [word2]
+        eval_future_position = eval(future_position, {"words": words})
+        future_words_indexes = [eval_future_position]
+
+        if eval_future_position != (len(words) - 1):
+            i = 0
+            while len(future_words_indexes) != future_words_count:
+                i += 1
+                future_words_indexes.append(eval_future_position + i)
+
+        czech_input = ""
+        pac_input = ""
+        result = ""
+
+        for i in range(len(words)):
+            if i == eval_future_position:
+                czech_input += " ["
+                pac_input += " ["
+                result += f" ["
+                for i2 in future_words_indexes:
+                    czech_input += f"{words[i2]}, "
+                    result += f"{words[i2]} ("
+
+                    for preposition, case in words_to_pacs[words[i2]]:
+                        if preposition is None or case is None:
+                            pac_input += "_, "
+                        else:
+                            pac_input += f"{preposition} {case.number}, "
+                            result += f"{preposition} {case.questions}, "
+
+                    pac_input = pac_input.rstrip(", ") + ". "
+                    result = (result.removesuffix(", ") + ")").removesuffix(" ()") + ", "
+                pac_input = pac_input.rstrip(". ") + "]"
+                result = result.removesuffix(", ").removesuffix(" ()") + "]"
+                czech_input = czech_input.rstrip(", ") + "]"
+                continue
+            if i in future_words_indexes:
+                continue
+
+            czech_input += f", {words[i]}"
+            pac_input += ". "
+            result += f", {words[i]} ("
+            for preposition, case in words_to_pacs[words[i]]:
+                if preposition is None or case is None:
+                    pac_input += "_, "
+                else:
+                    pac_input += f"{preposition} {case.number}, "
+                    result += f"{preposition} {case.questions}, "
+            pac_input = pac_input.strip(", ")
+            result = (result.removesuffix(", ") + ")").removesuffix(" ()")
+
+        czech_input = czech_input.lstrip(", ")
+        pac_input = pac_input.lstrip(". ")
+        result = result.lstrip(", ")
+
+        assert processor.process({czech_field_name: czech_input, pac_field_name: pac_input}) == result
 
 
 class TestAdjectiveProcessor(BaseTestProcessor):

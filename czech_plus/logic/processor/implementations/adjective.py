@@ -23,7 +23,7 @@ class AdjectiveProcessor(BaseProcessor):
         Returns:
             The processed content.
         """
-        logger.trace(
+        logger.debug(
             f"Parsing adjective card\n"
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__cocd_field_name} (CoCD field): {content[self.__cocd_field_name]}"

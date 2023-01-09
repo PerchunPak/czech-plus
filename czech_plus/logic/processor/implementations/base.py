@@ -51,13 +51,6 @@ class BaseProcessor(abc.ABC):
                     yield token_or_string
                 else:
                     temp_string += token_or_string.content
-            elif isinstance(token_or_string, tokens.FutureFormToken):
-                if temp_string != "":
-                    yield temp_string
-                    temp_string = ""
-                yield tokens.FutureFormToken(
-                    self._navigate_over(token_or_string.content, dont_skip_escaped=dont_skip_escaped)
-                )
             else:
                 if temp_string != "":
                     yield temp_string

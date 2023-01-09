@@ -1,6 +1,5 @@
 """Module for tokens, that then used inside lexer."""
 import abc
-import typing as t
 from dataclasses import dataclass
 
 
@@ -32,7 +31,15 @@ class SkipToken(BaseToken):
 
 
 @dataclass
-class FutureFormToken(BaseToken):
-    """Token for verb's future form."""
+class BaseFutureFormToken(BaseToken, abc.ABC):
+    """Base token for verb's future form."""
 
-    content: t.Iterator[t.Union[BaseToken, str]]
+
+@dataclass
+class FutureFormTokenStart(BaseFutureFormToken):
+    """Open token for verb's future form."""
+
+
+@dataclass
+class FutureFormTokenEnd(BaseFutureFormToken):
+    """Close token for verb's future form."""

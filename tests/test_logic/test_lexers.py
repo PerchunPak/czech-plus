@@ -61,53 +61,94 @@ __symbol = FakesGenerator("pystr", 1, 1)
             f"{__word[14]}, _, {__word[15]}",
             [__word[14], tokens.SeparatorToken(), tokens.SkipToken(), tokens.SeparatorToken(), __word[15]],
         ),
-        ([lexer.VerbLexer], f"[{__word[15]}]", [tokens.FutureFormToken([__word[15]])]),
+        (
+            [lexer.VerbLexer],
+            f"[{__word[15]}]",
+            [tokens.FutureFormTokenStart(), __word[15], tokens.FutureFormTokenEnd()],
+        ),
         (
             [lexer.VerbLexer],
             f"{__word[16]} [{__word[17]}]",
-            [__word[16], tokens.FutureFormToken([__word[17]])],
+            [__word[16], tokens.FutureFormTokenStart(), __word[17], tokens.FutureFormTokenEnd()],
         ),
         (
             [lexer.VerbLexer],
             f"{__word[18]} [{__word[19]}]. {__word[20]}",
-            [__word[18], tokens.FutureFormToken([__word[19]]), tokens.SeparatorToken(), __word[20]],
+            [
+                __word[18],
+                tokens.FutureFormTokenStart(),
+                __word[19],
+                tokens.FutureFormTokenEnd(),
+                tokens.SeparatorToken(),
+                __word[20],
+            ],
         ),
         (
             [lexer.VerbLexer],
             f"{__word[21]} [{__word[22]}]. {__word[23]} [{__word[24]}]",
             [
                 __word[21],
-                tokens.FutureFormToken([__word[22]]),
+                tokens.FutureFormTokenStart(),
+                __word[22],
+                tokens.FutureFormTokenEnd(),
                 tokens.SeparatorToken(),
                 __word[23],
-                tokens.FutureFormToken([__word[24]]),
+                tokens.FutureFormTokenStart(),
+                __word[24],
+                tokens.FutureFormTokenEnd(),
             ],
         ),
         (
             [lexer.VerbLexer],
             f"[{__word[25]}. {__word[26]}]",
-            [tokens.FutureFormToken([__word[25], tokens.SeparatorToken(), __word[26]])],
+            [
+                tokens.FutureFormTokenStart(),
+                __word[25],
+                tokens.SeparatorToken(),
+                __word[26],
+                tokens.FutureFormTokenEnd(),
+            ],
         ),
         (
             [lexer.VerbLexer],
             f"[{__word[27]}, {__word[28]}]",
-            [tokens.FutureFormToken([__word[27], tokens.AdditionalSeparatorToken(), __word[28]])],
+            [
+                tokens.FutureFormTokenStart(),
+                __word[27],
+                tokens.AdditionalSeparatorToken(),
+                __word[28],
+                tokens.FutureFormTokenEnd(),
+            ],
         ),
         (
             [lexer.VerbLexer],
             f"[{__word[29]}, {__word[30]}. {__word[31]}]",
             [
-                tokens.FutureFormToken(
-                    [__word[29], tokens.AdditionalSeparatorToken(), __word[30], tokens.SeparatorToken(), __word[31]]
-                )
+                tokens.FutureFormTokenStart(),
+                __word[29],
+                tokens.AdditionalSeparatorToken(),
+                __word[30],
+                tokens.SeparatorToken(),
+                __word[31],
+                tokens.FutureFormTokenEnd(),
             ],
         ),
         (_ANY_LEXER, "\\", [tokens.EscapedToken("")]),
         (_ANY_LEXER, f"{__word[32]} !{__word[33]}", [__word[32] + " ", tokens.EscapedToken(__word[33])]),
-        ([lexer.VerbLexer], "[", [tokens.FutureFormToken([])]),
+        ([lexer.VerbLexer], "[", [tokens.FutureFormTokenStart()]),
+        ([lexer.VerbLexer], "]", [tokens.FutureFormTokenEnd()]),
+        (
+            [lexer.VerbLexer],
+            f"[!{__word[34]}]",
+            [tokens.FutureFormTokenStart(), tokens.EscapedToken(__word[34]), tokens.FutureFormTokenEnd()],
+        ),
         # real examples from my vocabulary
         (_ANY_LEXER, "blůza, halenka", ["blůza", tokens.SeparatorToken(), "halenka"]),
-        ([lexer.VerbLexer], "ušklíbat se [ušklíbnout se]", ["ušklíbat se", tokens.FutureFormToken(["ušklíbnout se"])]),
+        (
+            [lexer.VerbLexer],
+            "ušklíbat se [ušklíbnout se]",
+            ["ušklíbat se", tokens.FutureFormTokenStart(), "ušklíbnout se", tokens.FutureFormTokenEnd()],
+        ),
     ],
 )
 def test_with_examples(
@@ -129,11 +170,7 @@ def test_with_examples(
         else:
             parsed_output = output
 
-        lexed = list(class_to_test().lex(input))
-        for i, item in enumerate(lexed):
-            if isinstance(item, tokens.FutureFormToken):
-                t.cast(tokens.FutureFormToken, lexed[i]).content = t.cast(t.Iterator, list(item.content))  # type: ignore[type-arg]
-        assert lexed == parsed_output
+        assert parsed_output == list(class_to_test().lex(input))
 
 
 @pytest.mark.parametrize(
@@ -141,24 +178,24 @@ def test_with_examples(
     [
         (
             [lexer.VerbLexer],
-            f"{__word[34]} [{__word[35]}\\]",
-            [__word[34], tokens.FutureFormToken([f"{__word[35]}]"])],
+            f"{__word[35]} [{__word[36]}\\]",
+            [__word[35], tokens.FutureFormTokenStart(), f"{__word[36]}]", tokens.FutureFormTokenEnd()],
         ),
         (
             [lexer.VerbLexer],
-            f"{__word[36]} [{__word[37]}\\], {__word[38]}",
-            [__word[36], tokens.FutureFormToken([f"{__word[37]}], {__word[38]}"])],
+            f"{__word[37]} [{__word[38]}\\], {__word[39]}",
+            [__word[37], tokens.FutureFormTokenStart(), f"{__word[38]}], {__word[39]}", tokens.FutureFormTokenEnd()],
         ),
         (_ANY_LEXER, f"\\!{__sentence[1][:-1]}!!", [tokens.EscapedToken("!"), f"{__sentence[1][:-1]}!!"]),
         (
             _ANY_LEXER,
-            f"{__word[39]}, !{__word[40]}\\, {__word[41]}",
-            [__word[39], tokens.EscapedToken(f"{__word[40]}, {__word[41]}")],
+            f"{__word[40]}, !{__word[41]}\\, {__word[42]}",
+            [__word[40], tokens.EscapedToken(f"{__word[41]}, {__word[42]}")],
         ),
         (
             _ANY_LEXER,
-            f"{__word[42]}, !{__word[43]}\\,",
-            [__word[42], tokens.EscapedToken(f"{__word[43]},")],
+            f"{__word[43]}, !{__word[44]}\\,",
+            [__word[43], tokens.EscapedToken(f"{__word[44]},")],
         ),
     ],
 )

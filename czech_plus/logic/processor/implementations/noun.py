@@ -24,7 +24,7 @@ class NounProcessor(BaseProcessor):
         Returns:
             The processed ``czech`` field, ready to be inserted into the card.
         """
-        logger.trace(
+        logger.debug(
             f"Parsing noun card\n"
             f"{self.__czech_field_name} (Czech field): {content[self.__czech_field_name]}\n"
             f"{self.__gender_field_name} (Gender field): {content[self.__gender_field_name]}"
