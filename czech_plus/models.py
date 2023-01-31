@@ -38,6 +38,12 @@ class Gender(enum.Enum):
     """Female plural."""
     mN = "mN"
     """Neuter plural."""
+    # Special genders
+    A = "ten/ta"
+    """Animate (masculine/female).
+
+    Look at ``recepční`` gender.
+    """
 
 
 @enum.unique
