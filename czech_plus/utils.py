@@ -11,7 +11,7 @@ from czech_plus._vendor.loguru import logger
 
 from czech_plus import config as config_module
 
-__all__ = ["setup_logging", "Singleton"]
+__all__ = ["setup_logging", "assert_that", "Singleton"]
 
 
 def setup_logging() -> None:
@@ -61,3 +61,18 @@ class Singleton(type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
+
+def assert_that(statement: bool, msg: str = "", /) -> None:
+    """By default, Anki removes all asserts from the code, so we need to craft own assert.
+
+    Example:
+        .. code-block:: python
+
+            assert next(generator) == str  # if this statement will not be executed - everything will fail.
+    """
+    if not statement:
+        try:
+            raise AssertionError(msg)
+        except AssertionError:
+            logger.exception("Oops, some assertion failed. It's either a bug nor error in syntax.")

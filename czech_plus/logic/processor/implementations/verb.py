@@ -6,6 +6,7 @@ from czech_plus._vendor.loguru import logger
 from czech_plus import models
 from czech_plus.logic.lexer import VerbLexer, tokens
 from czech_plus.logic.processor.implementations import BaseProcessor
+from czech_plus.utils import assert_that
 
 _T = t.TypeVar("_T", bound=t.Iterator[t.Union[str, tokens.BaseToken]])
 
@@ -78,7 +79,7 @@ class VerbProcessor(BaseProcessor):
             elif isinstance(czech, (tokens.FutureFormTokenStart, tokens.FutureFormTokenEnd)):
                 logger.debug("Processing future form.")
                 if not future_form_was and isinstance(czech, tokens.FutureFormTokenStart):
-                    assert list(self._pre_process_czech_token(czech, lexed_prepositions_and_cases)) == [czech]
+                    assert_that(list(self._pre_process_czech_token(czech, lexed_prepositions_and_cases)) == [czech])
                 future_form_was = False
                 yield czech, [czech]
             else:  # pragma: no cover
@@ -91,7 +92,7 @@ class VerbProcessor(BaseProcessor):
     ) -> t.Iterator[t.Union[tokens.BaseToken, str]]:
         logger.debug(f"Pre-processing czech token {czech!r}.")
         if isinstance(czech, tokens.FutureFormTokenStart):
-            assert next(lexed_prepositions_and_cases) == tokens.FutureFormTokenStart()
+            assert_that(next(lexed_prepositions_and_cases) == tokens.FutureFormTokenStart())
             yield tokens.FutureFormTokenStart()
         elif isinstance(czech, str):
             for i, preposition_and_case in enumerate(lexed_prepositions_and_cases):

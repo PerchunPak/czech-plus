@@ -6,6 +6,7 @@ from collections.abc import Callable, Generator, Iterator
 from czech_plus._vendor.loguru import logger
 
 from czech_plus.logic.lexer import tokens
+from czech_plus.utils import assert_that
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -92,7 +93,7 @@ class BaseLexer(abc.ABC):
                     except StopIteration as exception:
                         logger.debug(f"`handle_hook_generator` raised StopIteration with values: {exception.value}")
                         rerun, skip = exception.value  # return statement in generator
-                        assert rerun is False, "This doesn't make sense if you rerun symbol in first iteration!"
+                        assert_that(rerun is False, "This doesn't make sense if you rerun symbol in first iteration!")
                         break
                     else:
                         logger.debug(f"`handle_hook_generator` returned: {token=}")
