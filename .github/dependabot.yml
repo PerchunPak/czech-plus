@@ -12,6 +12,13 @@ updates:
       update-types: [ "version-update:semver-minor" ]
     # Update these dependencies with CI (poetry update)
     - dependency-name: "colorama"
+    - dependency-name: "types-markdown"
+    - dependency-name: "types-decorator"
+    - dependency-name: "types-mock"
+    - dependency-name: "types-protobuf"
+    - dependency-name: "types-requests"
+    - dependency-name: "types-setuptools"
+    - dependency-name: "types-waitress"
     # Update these dependencies with python-template
     - dependency-name: "omegaconf"
     - dependency-name: "structlog"
