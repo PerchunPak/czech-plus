@@ -70,6 +70,13 @@ jobs:
     - name: Run checks
       run: poetry run make test ci=1
 
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'czech_plus/**/*.py'
+
   post-test:
     runs-on: ubuntu-latest
     needs: 'test'
@@ -152,3 +159,92 @@ jobs:
           PerchunPak/czech-plus \
           ${{ github.head_ref || github.ref_name }} \
           "Update template :arrow_up:"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: 'test'
+    if: steps.changes.outputs.src == 'true'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Poetry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.config/pypoetry
+          ~/.local/share/pypoetry
+          ~/.cache/pypoetry
+        key: poetry-${{ runner.os }}-${{ github.event.repository.updated_at}}
+        restore-keys: |
+          poetry-${{ runner.os }}-
+
+    - name: Install/Update Poetry
+      run: |
+        curl -sSL "https://install.python-poetry.org" | python
+
+        echo "$HOME/.local/share/pypoetry/venv/bin" >> $GITHUB_PATH
+        ~/.local/share/pypoetry/venv/bin/poetry config virtualenvs.in-project true
+
+    - name: Cache Packages and Dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ github.workspace }}/.venv
+          ${{ github.workspace }}/czech_plus/_vendor
+          ${{ github.workspace }}/.mypy_cache
+          ${{ github.workspace }}/.pytest_cache
+        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles('poetry.lock', 'czech_plus/_vendor/requirements.txt', '.mypy_cache/**/*', '.pytest_cache/**/*') }}
+        restore-keys: |
+          dependencies-${{ github.job }}-${{ runner.os }}-
+
+    - name: Install and Cache APT packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libegl1-mesa
+        version: 1.0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        poetry env use "3.9"
+        poetry install --only main,deploy --sync
+        poetry run vendoring sync
+
+    - name: Generate config.yml
+      run: poetry run python -c "from czech_plus.config import Config; Config()._write_config()"
+
+    - name: Remove all unnecessary files
+      run: python .github/optimize_for_build.py
+
+    - name: Create __init__.py that will load our add-on
+      run: |
+        echo 'import sys' >> '__init__.py'
+        echo 'from pathlib import Path' >> '__init__.py'
+        echo 'import aqt' >> '__init__.py'
+        echo '' >> '__init__.py'
+        echo 'sys.path.append(str(Path(__file__).parent.resolve()))' >> '__init__.py'
+        echo '' >> '__init__.py'
+        echo 'import czech_plus' >> '__init__.py'
+        echo '' >> '__init__.py'
+        echo 'aqt.gui_hooks.main_window_did_init.append(czech_plus.main)' >> '__init__.py'
+
+    - name: Package all the data
+      run: zip -r czech-plus.ankiaddon *
+
+    - name: Create Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: czech-plus-ankiaddon
+        path: |
+          czech-plus.ankiaddon
+
+    - name: Upload to Anki
+      run: poetry run python .github/upload_to_anki.py
+      env:
+        ANKI_USERNAME: ${{ secrets.ANKI_USERNAME }}
+        ANKI_PASSWORD: ${{ secrets.ANKI_PASSWORD }}
