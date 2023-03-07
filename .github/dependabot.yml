@@ -10,8 +10,42 @@ updates:
       update-types: [ "version-update:semver-patch" ]
     - dependency-name: "typing-extensions"
       update-types: [ "version-update:semver-minor" ]
-    # Update these dependencies with CI (poetry update)
-    - dependency-name: "colorama"
+    # Update these dependencies with python-template or `poetry update`
+    - dependency-name: "omegaconf"
+    # Make group
+    - dependency-name: "black"
+    - dependency-name: "isort"
+    - dependency-name: "pycln"
+    - dependency-name: "doc8"
+    - dependency-name: "mypy"
+    - dependency-name: "flake8"
+    - dependency-name: "flake8-docstrings"
+    - dependency-name: "flake8-ensure-ascii"
+    - dependency-name: "pydocstyle"
+    - dependency-name: "safety"
+    - dependency-name: "cruft"
+    - dependency-name: "lice"
+    - dependency-name: "pre-commit"
+    # Tests group
+    - dependency-name: "pytest"
+    - dependency-name: "pytest-cov"
+    - dependency-name: "pytest-mock"
+    - dependency-name: "pytest-testmon"
+    - dependency-name: "pytest-randomly"
+    - dependency-name: "Faker"
+    # Docs group
+    - dependency-name: "sphinx"
+    - dependency-name: "sphinx-autodoc-typehints"
+    - dependency-name: "sphinx-autoapi"
+    - dependency-name: "sphinx-intl"
+    - dependency-name: "furo"
+    - dependency-name: "m2r2"
+    - dependency-name: "tomli"
+    - dependency-name: "packaging"
+    # GitHub Hooks group
+    - dependency-name: "requests"
+    - dependency-name: "GitPython"
+    # Types group
     - dependency-name: "types-markdown"
     - dependency-name: "types-decorator"
     - dependency-name: "types-mock"
@@ -19,37 +53,7 @@ updates:
     - dependency-name: "types-requests"
     - dependency-name: "types-setuptools"
     - dependency-name: "types-waitress"
-    # Update these dependencies with python-template
-    - dependency-name: "omegaconf"
-    - dependency-name: "structlog"
-    ### Docs section ###
-    - dependency-name: "sphinx"
-    - dependency-name: "sphinx-autodoc-typehints"
-    - dependency-name: "sphinxcontrib-apidoc"
-    - dependency-name: "furo"
-    - dependency-name: "m2r2"
-    - dependency-name: "tomli"
-    ### Dev section ###
-    - dependency-name: "black"
-    - dependency-name: "click"
-    - dependency-name: "isort"
-    - dependency-name: "pycln"
-    - dependency-name: "doc8"
-    - dependency-name: "pre-commit"
-    - dependency-name: "mypy"
-    - dependency-name: "flake8"
-    - dependency-name: "flake8-docstrings"
-    - dependency-name: "pydocstyle"
-    - dependency-name: "safety"
-    - dependency-name: "cruft"
-    - dependency-name: "lice"
-    - dependency-name: "pytest"
-    - dependency-name: "pytest-cov"
-    - dependency-name: "pytest-mock"
-    - dependency-name: "pytest-testmon"
-    - dependency-name: "pytest-randomly"
-    - dependency-name: "Faker"
-    - dependency-name: "GitPython"
+
 - package-ecosystem: pip
   directory: "/czech_plus/_vendor"
   schedule:
