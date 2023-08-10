@@ -120,18 +120,6 @@ jobs:
           ${{ github.head_ref || github.ref_name }} \
           "Update poetry.lock :chart_with_upwards_trend:"
 
-    - name: Update template
-      run: |
-        poetry run cruft update
-
-    - name: Commit changes
-      run: |
-        poetry run python .github/commit_and_push.py \
-          --token ${{ secrets.GITHUB_TOKEN }} \
-          PerchunPak/czech-plus \
-          ${{ github.head_ref || github.ref_name }} \
-          "Update template :arrow_up:"
-
     - name: Bump template
       run: |
         set -o pipefail
@@ -144,7 +132,7 @@ jobs:
         }
 
         echo "::group::Bump template (first try)"
-        cruft update -y
+        poetry run cruft update -y
         echo "::endgroup::"
 
         echo "::group::List of conflicts"
