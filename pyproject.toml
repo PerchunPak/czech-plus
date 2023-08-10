@@ -46,7 +46,7 @@ pytest-mock = "~3.11"
 pytest-testmon = "~2.0"
 pytest-randomly = "~3.13"
 
-factory-boy = "~3.2"
+factory-boy = "~3.3"
 Faker = "~19.3"
 
 
