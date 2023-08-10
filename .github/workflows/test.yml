@@ -20,46 +20,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache Poetry
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.config/pypoetry
-          ~/.local/share/pypoetry
-          ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ github.event.repository.updated_at}}
-        restore-keys: |
-          poetry-${{ runner.os }}-
-
-    - name: Install/Update Poetry
-      run: |
-        curl -sSL "https://install.python-poetry.org" | python
-
-        echo "$HOME/.local/share/pypoetry/venv/bin" >> $GITHUB_PATH
-        ~/.local/share/pypoetry/venv/bin/poetry config virtualenvs.in-project true
-
-    - name: Cache Packages and Dependencies cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ github.workspace }}/.venv
-          ${{ github.workspace }}/czech_plus/_vendor
-          ${{ github.workspace }}/.mypy_cache
-          ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles('poetry.lock', 'czech_plus/_vendor/requirements.txt', '.mypy_cache/**/*', '.pytest_cache/**/*') }}
-        restore-keys: |
-          dependencies-${{ github.job }}-${{ runner.os }}-
-
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: libegl1-mesa
         version: 1.0
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    - name: Setup poetry
+      id: poetry_setup
+      uses: ItsDrike/setup-poetry@v1
       with:
         python-version: ${{ matrix.python-version }}
+        install-args: --without docs --with github_hooks --sync
 
     - name: Install dependencies
       run: |
@@ -160,6 +132,56 @@ jobs:
           ${{ github.head_ref || github.ref_name }} \
           "Update template :arrow_up:"
 
+    - name: Bump template
+      run: |
+        set -o pipefail
+
+        function print_conflicts_list() {
+          find . -regex '^.*\.rej$';
+        }
+        function update_count_of_conflicts() {
+          CONFLICTS_COUNT=$(find . -regex '^.*\.rej$' -printf '.' | wc -c)
+        }
+
+        echo "::group::Bump template (first try)"
+        cruft update -y
+        echo "::endgroup::"
+
+        echo "::group::List of conflicts"
+        print_conflicts_list
+        echo "::endgroup::"
+
+        update_count_of_conflicts
+        if [[ $CONFLICTS_COUNT -gt 0 ]]
+        then
+          echo "::group::Try to resolve conflicts"
+          rm -f poetry.lock.rej poetry.lock
+          git checkout master -- poetry.lock
+          poetry lock --no-update
+          echo "::endgroup::"
+        
+          echo "::group::List of conflicts"
+          print_conflicts_list
+          echo "::endgroup::"
+
+          update_count_of_conflicts
+          if [[ $CONFLICTS_COUNT -gt 0 ]]
+          then
+            exit 1
+          fi
+        else
+          echo "No conflicts found"
+        fi
+
+    - name: Commit changes
+      run: |
+        poetry run python .github/commit_and_push.py \
+          --token ${{ secrets.GITHUB_TOKEN }} \
+          PerchunPak/czech-plus \
+          ${{ github.head_ref || github.ref_name }} \
+          "Bump template :rocket:"
+
+
   deploy:
     runs-on: ubuntu-latest
     needs: 'test'
@@ -168,52 +190,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache Poetry
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.config/pypoetry
-          ~/.local/share/pypoetry
-          ~/.cache/pypoetry
-        key: poetry-${{ runner.os }}-${{ github.event.repository.updated_at}}
-        restore-keys: |
-          poetry-${{ runner.os }}-
-
-    - name: Install/Update Poetry
-      run: |
-        curl -sSL "https://install.python-poetry.org" | python
-
-        echo "$HOME/.local/share/pypoetry/venv/bin" >> $GITHUB_PATH
-        ~/.local/share/pypoetry/venv/bin/poetry config virtualenvs.in-project true
-
-    - name: Cache Packages and Dependencies cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ github.workspace }}/.venv
-          ${{ github.workspace }}/czech_plus/_vendor
-          ${{ github.workspace }}/.mypy_cache
-          ${{ github.workspace }}/.pytest_cache
-        key: dependencies-${{ github.job }}-${{ runner.os }}-${{ hashFiles('poetry.lock', 'czech_plus/_vendor/requirements.txt', '.mypy_cache/**/*', '.pytest_cache/**/*') }}
-        restore-keys: |
-          dependencies-${{ github.job }}-${{ runner.os }}-
-
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: libegl1-mesa
         version: 1.0
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Setup poetry
+      id: poetry_setup
+      uses: ItsDrike/setup-poetry@v1
       with:
-        python-version: '3.9'
-
-    - name: Install dependencies
-      run: |
-        poetry env use "3.9"
-        poetry install --only main,deploy --sync
-        poetry run vendoring sync
+        python-version: 3.9
+        install-args: --only main,deploy --sync
 
     - name: Generate config.yml
       run: poetry run python -c "from czech_plus.config import Config; Config()._write_config()"
