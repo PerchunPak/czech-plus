@@ -1,5 +1,5 @@
 # WARN: loguru sayed that they will rewrite part of code to C
 #       if dependabot will try to update this, check is loguru
 #       still pure python!
-loguru==0.7.0
+loguru==0.7.1
 win32_setctime==1.1.0
