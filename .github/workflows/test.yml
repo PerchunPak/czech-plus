@@ -18,7 +18,7 @@ jobs:
         python-version: ['3.9']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -54,7 +54,7 @@ jobs:
     needs: 'test'
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Cache Poetry
       uses: actions/cache@v3
@@ -176,7 +176,7 @@ jobs:
     if: ${{ needs.changes.outputs.src == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install and Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@latest
