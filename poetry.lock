@@ -13,16 +13,16 @@ files = [
 
 [[package]]
 name = "anki"
-version = "2.1.66"
+version = "23.10"
 description = ""
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "anki-2.1.66-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:8e861e86c5ac1dc1c143178c7d4285194873eed307bb4730e5dd385ec2b8049a"},
-    {file = "anki-2.1.66-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:83363bdd814063eb842f25ef62e2a376d834d8f3ec1d33748ae19dfe2d51dcb8"},
-    {file = "anki-2.1.66-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:4cee6c4443af1d9d6d406ca35d2f6c1e0323ca6213021acf59b5d21aac17fc2d"},
-    {file = "anki-2.1.66-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:41fd7c49e2bb96667d303c0fc6dbf3466dbe5a8accdcb7ae656b1c7d794a0f40"},
-    {file = "anki-2.1.66-cp39-abi3-win_amd64.whl", hash = "sha256:d651ef4d225a7e1c78110e431a2fb2605f9aa5bd1954f955bd37bfe07dc62c68"},
+    {file = "anki-23.10-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:35e6c8f4c09546f74466648b840de6c0edbc18af4696b7699ce6f4b58b9f6107"},
+    {file = "anki-23.10-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:4ad4f2a45b395d067d16bc60b2a21f48f096d3d172d4859e8a1c669572bde183"},
+    {file = "anki-23.10-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:4433f6553c381eb01d2558989032d2410c92b96d5e9f860574291cfce8161b7b"},
+    {file = "anki-23.10-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:9b59e8d818e50785d3a4aa3440cf0d4752ae1f7375a833953e54fd1d0b7885ca"},
+    {file = "anki-23.10-cp39-abi3-win_amd64.whl", hash = "sha256:ecbfd51a9ea84f1e413ec716eab421d0a84aede67fb95c9c1aff5c93622ed7f8"},
 ]
 
 [package.dependencies]
@@ -48,16 +48,16 @@ files = [
 
 [[package]]
 name = "aqt"
-version = "2.1.66"
+version = "23.10"
 description = ""
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "aqt-2.1.66-py3-none-any.whl", hash = "sha256:1f4810bd7c8db35002889369917e355c30407cb4112cc55fe021de1e1193d4ed"},
+    {file = "aqt-23.10-py3-none-any.whl", hash = "sha256:3aa8e968f8058ec6644b5150dbe2131db2eafa74066ea09a1163729255ec97f5"},
 ]
 
 [package.dependencies]
-anki = "2.1.66"
+anki = "23.10"
 beautifulsoup4 = "*"
 flask = "*"
 flask_cors = "*"
@@ -2845,4 +2845,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.9"
-content-hash = "e32956f13dc61b154d9ca9bb5ac9ac5f75684a6b33bcdcaf3969825984314174"
+content-hash = "fc0b875edd3decc1caefb88f886499d10f1757f1c22482b0a2b4940af021b3bd"
