@@ -16,7 +16,7 @@ repository = "https://github.com/PerchunPak/czech-plus"
 [tool.poetry.dependencies]
 python = "~3.9"
 
-aqt = {extras = ["qt6"], version = "~2"}
+aqt = {extras = ["qt6"], version = "~23"}
 
 # see `czech_plus._vendor`'s README
 vendoring = "~1.2"
