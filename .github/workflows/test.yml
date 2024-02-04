@@ -42,7 +42,7 @@ jobs:
     - name: Run checks
       run: poetry run make test ci=1
 
-    - uses: dorny/paths-filter@v2
+    - uses: dorny/paths-filter@v3
       id: changes
       with:
         filters: |
