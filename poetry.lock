@@ -13,16 +13,16 @@ files = [
 
 [[package]]
 name = "anki"
-version = "24.4"
+version = "24.6.2"
 description = ""
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "anki-24.04-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:ac2c0cc3b88db52140b1be8e6480153fc09790665d240c57f1803c13e2e5c5e8"},
-    {file = "anki-24.04-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:c50ca3f0d3b472d8c61735f1bdee722d91a669cf76ee1acdf1b2d5787ddb69e0"},
-    {file = "anki-24.04-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:cfc89e1608c9817f1f3fea156e64a7e8824dbf88e7dabc7d49c5f1ff63d8361c"},
-    {file = "anki-24.04-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:8a18dd9992910c73d3bdaf7cbe2ca2c73e7439d94c453ddc1e4d97a227576072"},
-    {file = "anki-24.04-cp39-abi3-win_amd64.whl", hash = "sha256:82b99f0a9abc5dc0c9b21868db88d2a0fd93b6a29a7b6f6c23a76eb33705b707"},
+    {file = "anki-24.06.2-cp39-abi3-macosx_10_13_x86_64.whl", hash = "sha256:ee5082896dc81bc9f39f790988296d321f541e001717ef4ac0592c5ccdb8b894"},
+    {file = "anki-24.06.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:8d55aa48f2ef2f026f384a6febf6c628b753c3a24729519a8fb3aff4779dde25"},
+    {file = "anki-24.06.2-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:fe16684bedd8a7b4ccb594576ac3083dba424f1606321fcea3701c03cb6a7fbe"},
+    {file = "anki-24.06.2-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:eea7eaca8f157fe420ceb14269f9bbfd8273d25fc14d346d6dd6e68ce0364663"},
+    {file = "anki-24.06.2-cp39-abi3-win_amd64.whl", hash = "sha256:2cccf4ee57990a2a67948452b26cca3d05e0062bf9f5019ebc4f2fec6ee611c8"},
 ]
 
 [package.dependencies]
@@ -48,16 +48,16 @@ files = [
 
 [[package]]
 name = "aqt"
-version = "24.4"
+version = "24.6.2"
 description = ""
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "aqt-24.04-py3-none-any.whl", hash = "sha256:db1f77a93b134fd516ba5524927b6de86cab2207a9be09fe50efe0bf77eac602"},
+    {file = "aqt-24.06.2-py3-none-any.whl", hash = "sha256:60be55d7a5e3cae3bfc5bc9d55ed9aa5d5d76ad5a4bdd90bb04654f06958212a"},
 ]
 
 [package.dependencies]
-anki = "24.04"
+anki = "24.06.2"
 beautifulsoup4 = "*"
 flask = "*"
 flask_cors = "*"
