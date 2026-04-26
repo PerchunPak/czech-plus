@@ -1,3 +1,7 @@
+> [!WARNING]
+> I don't use Anki anymore. Also, I found this extension extremely overwhelming
+> and got burnt out...
+
 # czech-plus
 
 [![Support Ukraine](https://badgen.net/badge/support/UKRAINE/?color=0057B8&labelColor=FFD700)](https://www.gov.uk/government/news/ukraine-what-you-can-do-to-help)
